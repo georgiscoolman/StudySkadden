@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TextAppearance.Roboto.Bold" parent="android:TextAppearance">
+        <item name="fontPath">fonts/roboto_bold.ttf</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.Light" parent="android:TextAppearance">
+        <item name="fontPath">fonts/roboto_light.ttf</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.Regular" parent="android:TextAppearance">
+        <item name="fontPath">fonts/roboto_regular.ttf</item>
+    </style>
+
+    <style name="TextAppearance.Roboto.Thin" parent="android:TextAppearance">
+        <item name="fontPath">fonts/roboto_thin.ttf</item>
+    </style>
+
+    <style name="TextAppearance.RobotoSlab.Regular" parent="android:TextAppearance">
+        <item name="fontPath">fonts/roboto_slab_regular.ttf</item>
+    </style>
+
+    <style name="TextAppearance.RobotoSlab.Bold" parent="android:TextAppearance">
+        <item name="fontPath">fonts/roboto_slab_bold.ttf</item>
+    </style>
+
+    <style name="TextAppearance.RobotoSlab.Light" parent="android:TextAppearance">
+        <item name="fontPath">fonts/roboto_slab_light.ttf</item>
+    </style>
+
+    <style name="TextAppearance.RobotoSlab.Thin" parent="android:TextAppearance">
+        <item name="fontPath">fonts/roboto_slab_thin.ttf</item>
+    </style>
+
+</resources>

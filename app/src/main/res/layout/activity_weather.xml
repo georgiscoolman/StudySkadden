@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swiperefresh"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".ui.WeatherActivity">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/city_country"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="16dp"
+                            android:textSize="21sp"
+                            android:textColor="@android:color/black"
+                            android:textAppearance="@style/TextAppearance.RobotoSlab.Regular"
+                            />
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:gravity="center">
+
+                                <ImageView
+                                    android:layout_marginRight="8dp"
+                                    android:id="@+id/icon"
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    android:scaleType="fitXY"/>
+
+                                <TextView
+                                    android:id="@+id/temp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="30sp"
+                                    android:textColor="@android:color/black"
+                                    android:textAppearance="@style/TextAppearance.RobotoSlab.Light"/>
+
+                                <LinearLayout
+                                    android:orientation="vertical"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="right">
+
+                                        <TextView
+                                            android:id="@+id/temp_max"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:textAppearance="@style/TextAppearance.RobotoSlab.Light"/>
+
+                                        <TextView
+                                            android:id="@+id/temp_min"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:textAppearance="@style/TextAppearance.RobotoSlab.Light"/>
+
+                                </LinearLayout>
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/descr"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="16dp"
+                            android:textSize="21sp"
+                            android:textAppearance="@style/TextAppearance.RobotoSlab.Thin"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                        <TextView
+                                            android:id="@+id/pressure"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:textAppearance="@style/TextAppearance.RobotoSlab.Thin"
+                                            />
+
+                                        <TextView
+                                            android:id="@+id/humidity"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:textAppearance="@style/TextAppearance.RobotoSlab.Thin"
+                                            />
+
+                                        <TextView
+                                            android:id="@+id/wind"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:textAppearance="@style/TextAppearance.RobotoSlab.Thin"
+                                            />
+
+                                </LinearLayout>
+
+
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:paddingTop="8dp"
+                            android:id="@+id/date"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.RobotoSlab.Light"
+                            android:gravity="right"/>
+
+
+                </LinearLayout>
+
+        </ScrollView>
+</android.support.v4.widget.SwipeRefreshLayout>
+
