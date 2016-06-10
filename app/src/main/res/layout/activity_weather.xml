@@ -5,10 +5,6 @@
     android:id="@+id/swiperefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".ui.WeatherActivity">
 
         <ScrollView
@@ -18,7 +14,11 @@
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:paddingBottom="@dimen/activity_vertical_margin"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:paddingTop="@dimen/activity_vertical_margin">
 
                         <TextView
                             android:id="@+id/city_country"
@@ -27,7 +27,7 @@
                             android:paddingBottom="16dp"
                             android:textSize="21sp"
                             android:textColor="@android:color/black"
-                            android:textAppearance="@style/TextAppearance.RobotoSlab.Regular"
+                            android:textAppearance="@style/TextAppearance.RobotoSlab.Light"
                             />
 
                         <LinearLayout
@@ -50,7 +50,7 @@
                                     android:layout_height="wrap_content"
                                     android:textSize="30sp"
                                     android:textColor="@android:color/black"
-                                    android:textAppearance="@style/TextAppearance.RobotoSlab.Light"/>
+                                    android:textAppearance="@style/TextAppearance.RobotoSlab.Regular"/>
 
                                 <LinearLayout
                                     android:orientation="vertical"
@@ -81,7 +81,7 @@
                             android:layout_height="wrap_content"
                             android:paddingBottom="16dp"
                             android:textSize="21sp"
-                            android:textAppearance="@style/TextAppearance.RobotoSlab.Thin"/>
+                            android:textAppearance="@style/TextAppearance.RobotoSlab.Light"/>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -99,26 +99,24 @@
                                             android:id="@+id/pressure"
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
-                                            android:textAppearance="@style/TextAppearance.RobotoSlab.Thin"
+                                            android:textAppearance="@style/TextAppearance.RobotoSlab.Light"
                                             />
 
                                         <TextView
                                             android:id="@+id/humidity"
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
-                                            android:textAppearance="@style/TextAppearance.RobotoSlab.Thin"
+                                            android:textAppearance="@style/TextAppearance.RobotoSlab.Light"
                                             />
 
                                         <TextView
                                             android:id="@+id/wind"
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
-                                            android:textAppearance="@style/TextAppearance.RobotoSlab.Thin"
+                                            android:textAppearance="@style/TextAppearance.RobotoSlab.Light"
                                             />
 
                                 </LinearLayout>
-
-
 
                         </LinearLayout>
 
