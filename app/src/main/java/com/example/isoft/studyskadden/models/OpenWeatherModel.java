@@ -9,14 +9,13 @@ import rx.Observable;
 /**
  * Created by isoft on 07.06.16.
  */
-public class WeatherModelImpl implements WeatherModel {
+public class OpenWeatherModel implements WeatherModel {
     @Override
     public Observable<PojoModel> request(String name) {
 
         RestApi weatherService = RetrofitServiceFactory.getInstance();
-        Observable<PojoModel> pojoModel = weatherService.getWheatherReportByCityName(name);
 
-        return pojoModel;
+        return weatherService.getWheatherReportByCityName(name);
 
     }
 }

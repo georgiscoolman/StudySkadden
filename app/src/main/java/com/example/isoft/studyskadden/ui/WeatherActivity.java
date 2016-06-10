@@ -1,7 +1,7 @@
 package com.example.isoft.studyskadden.ui;
 
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -10,18 +10,18 @@ import com.bumptech.glide.Glide;
 import com.example.isoft.studyskadden.R;
 import com.example.isoft.studyskadden.entities.City;
 import com.example.isoft.studyskadden.entities.MyWeather;
-import com.example.isoft.studyskadden.models.WeatherModel;
-import com.example.isoft.studyskadden.models.WeatherModelImpl;
-import com.example.isoft.studyskadden.presenters.BasePresenter;
-import com.example.isoft.studyskadden.presenters.WeatherPresenterImpl;
+import com.example.isoft.studyskadden.presenters.WeatherPresenter;
 import com.example.isoft.studyskadden.rest.RestApi;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class WeatherActivity extends BaseActivity implements WeatherView, SwipeRefreshLayout.OnRefreshListener{
 
-    private WeatherPresenterImpl weatherPresenter;
+    @Inject
+    WeatherPresenter weatherPresenter;
 
     @BindView(R.id.swiperefresh) SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.city_country) TextView cityCountry;
@@ -40,11 +40,10 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getAppComponent().inject(this);
         setContentView(R.layout.activity_weather);
         ButterKnife.bind(this);
 
-        WeatherModel exampleModel = new WeatherModelImpl();
-        weatherPresenter = new WeatherPresenterImpl(exampleModel);
         weatherPresenter.attachView(this);
 
         weatherPresenter.onUpdate();
