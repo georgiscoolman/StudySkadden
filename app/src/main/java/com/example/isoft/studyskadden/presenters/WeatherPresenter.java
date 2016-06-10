@@ -35,6 +35,7 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
 
         Subscription subscription = observable.subscribe(pojoModel -> {
                     City city = new City((PojoModel) pojoModel);
+                    mMvpView.startUpdate();
                     mMvpView.showResponse(city);
                     mMvpView.stopUpdate();
                 });

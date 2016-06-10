@@ -1,7 +1,11 @@
 package com.example.isoft.studyskadden.ui;
 
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.SearchView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -125,8 +129,35 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
     }
 
     @Override
+    public void startUpdate() {
+        swipeRefreshLayout.setRefreshing(true);
+    }
+
+    @Override
     public void stopUpdate() {
         swipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        final MenuItem item = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setQueryHint(getString(R.string.city_name));
+        //searchView.setOnQueryTextListener(this);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.menu_refresh){
+            weatherPresenter.onUpdate();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

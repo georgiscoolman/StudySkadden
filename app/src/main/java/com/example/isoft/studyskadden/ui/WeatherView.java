@@ -7,6 +7,8 @@ import com.example.isoft.studyskadden.entities.City;
  */
 public interface WeatherView extends MvpView {
 
+    public void startUpdate();
+
     public void showResponse(City city);
 
     public void stopUpdate();
