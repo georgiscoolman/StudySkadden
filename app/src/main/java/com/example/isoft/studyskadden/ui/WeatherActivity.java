@@ -21,6 +21,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
 
 public class WeatherActivity extends BaseActivity implements WeatherView, SwipeRefreshLayout.OnRefreshListener{
 
@@ -40,6 +41,7 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
     @BindView(R.id.date) TextView date;
 
     private static final String WEB_IMAGES_FORMAT = "%s/img/w/%s.png";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +70,7 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
             cityCountry.setVisibility(View.VISIBLE);
             cityCountry.setText(String.format(this.getString(R.string.city_country_format), city.getName(), city.getCountry()));
 
-            MyWeather weather = city.getMyWeather();
+            MyWeather weather = (MyWeather) city.getWeatherLog().get(0);
 
             if (weather != null){
                 Double tmp = weather.getTemp();

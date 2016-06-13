@@ -8,6 +8,8 @@ import com.example.isoft.studyskadden.injection.component.DaggerApplicationCompo
 import com.example.isoft.studyskadden.injection.module.ApplicationModule;
 
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 public class StudySkaddenApp extends Application {
@@ -27,6 +29,9 @@ public class StudySkaddenApp extends Application {
                 .setFontAttrId(R.attr.fontPath)
                 .build()
         );
+
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this).build();
+        Realm.setDefaultConfiguration(realmConfiguration);
     }
 
     public ApplicationComponent getComponent() {

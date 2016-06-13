@@ -7,6 +7,7 @@ import com.example.isoft.studyskadden.ui.WeatherView;
 
 import javax.inject.Inject;
 
+import io.realm.Realm;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -18,6 +19,7 @@ import rx.schedulers.Schedulers;
 public class WeatherPresenter extends BasePresenter<WeatherView>{
 
     private WeatherModel model;
+    private Realm realm;
 
     @Inject
     public WeatherPresenter(WeatherModel model) {
@@ -34,7 +36,9 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
                 .observeOn(AndroidSchedulers.mainThread());
 
         Subscription subscription = observable.subscribe(pojoModel -> {
-                    City city = new City((PojoModel) pojoModel);
+                    realm.beginTransaction();
+                    City city = new City((PojoModel) pojoModel, realm);
+                    realm.commitTransaction();
                     mMvpView.startUpdate();
                     mMvpView.showResponse(city);
                     mMvpView.stopUpdate();
@@ -44,10 +48,17 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
     }
 
     @Override
+    public void attachView(WeatherView mvpView) {
+        realm = Realm.getDefaultInstance();
+        super.attachView(mvpView);
+    }
+
+    @Override
     public void detachView() {
         if (mSubscriptions.hasSubscriptions() && !mSubscriptions.isUnsubscribed()) {
             mMvpView.stopUpdate();
         }
+        realm.close();
         super.detachView();
     }
 

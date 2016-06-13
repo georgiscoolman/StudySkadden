@@ -2,17 +2,23 @@ package com.example.isoft.studyskadden.entities;
 
 import com.example.isoft.studyskadden.rest.pojo.PojoModel;
 import com.example.isoft.studyskadden.rest.pojo.Sys;
-import com.example.isoft.studyskadden.rest.pojo.Weather;
 
+import java.util.LinkedList;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
-public class City implements BaseEntity{
 
+public class City extends RealmObject {
+
+    @PrimaryKey
     private Long id;
     private String name;
     private String country;
-    private MyWeather myWeather;
+    private RealmList<MyWeather> weatherLog;
 
     public City() {
     }
@@ -28,8 +34,16 @@ public class City implements BaseEntity{
                 this.country = sys.getCountry();
             }
 
-            this.myWeather = new MyWeather(model);
+            weatherLog = new RealmList<MyWeather>();
+            weatherLog.add(new MyWeather(model));
 
+        }
+    }
+
+    public City(PojoModel model, Realm realm){
+        this(model);
+        if (realm != null){
+            realm.copyToRealm(this);
         }
     }
 
@@ -45,8 +59,8 @@ public class City implements BaseEntity{
         return country;
     }
 
-    public MyWeather getMyWeather() {
-        return myWeather;
+    public List getWeatherLog() {
+        return weatherLog;
     }
 
     @Override

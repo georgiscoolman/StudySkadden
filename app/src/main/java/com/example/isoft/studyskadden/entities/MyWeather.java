@@ -10,11 +10,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-public class MyWeather implements BaseEntity{
+import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
+import io.realm.annotations.PrimaryKey;
 
+public class MyWeather extends RealmObject{
+
+    @Ignore
     public SimpleDateFormat sdfmad = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
-    private Long id;
+    @PrimaryKey
     private Date date;
     private String description;
     private String icon;
@@ -60,10 +65,6 @@ public class MyWeather implements BaseEntity{
 
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public Date getDate() {
         return date;
     }
@@ -107,7 +108,7 @@ public class MyWeather implements BaseEntity{
 
     @Override
     public String toString() {
-        return "id " + id + " date " + getDateReadable() + " temp " + temp + " tempMax " + tempMax + " tempMin " + tempMin + " pressure "
+        return " date " + getDateReadable() + " temp " + temp + " tempMax " + tempMax + " tempMin " + tempMin + " pressure "
                 + pressure + " humidity " + humidity + " windSpeed " + windSpeed + " description " + description + " icon " + icon;
     }
 
