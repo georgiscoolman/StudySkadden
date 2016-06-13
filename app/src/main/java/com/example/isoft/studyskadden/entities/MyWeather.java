@@ -19,7 +19,6 @@ public class MyWeather extends RealmObject{
     @Ignore
     public SimpleDateFormat sdfmad = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
-    @PrimaryKey
     private Date date;
     private String description;
     private String icon;
