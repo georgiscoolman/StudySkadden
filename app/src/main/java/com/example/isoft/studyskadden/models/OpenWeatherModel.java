@@ -2,7 +2,7 @@ package com.example.isoft.studyskadden.models;
 
 import com.example.isoft.studyskadden.rest.RestApi;
 import com.example.isoft.studyskadden.rest.RetrofitServiceFactory;
-import com.example.isoft.studyskadden.rest.pojo.PojoModel;
+import com.example.isoft.studyskadden.rest.pojo.ForecastDaily;
 
 import rx.Observable;
 
@@ -11,7 +11,7 @@ import rx.Observable;
  */
 public class OpenWeatherModel implements WeatherModel {
     @Override
-    public Observable<PojoModel> request(String name) {
+    public Observable<ForecastDaily> request(String name) {
 
         RestApi weatherService = RetrofitServiceFactory.getInstance();
 

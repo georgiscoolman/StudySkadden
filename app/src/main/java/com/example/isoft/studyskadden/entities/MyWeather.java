@@ -1,10 +1,8 @@
 package com.example.isoft.studyskadden.entities;
 
-import com.example.isoft.studyskadden.rest.pojo.Main;
-import com.example.isoft.studyskadden.rest.pojo.PojoModel;
+import com.example.isoft.studyskadden.rest.pojo.Temp;
 import com.example.isoft.studyskadden.rest.pojo.Weather;
-import com.example.isoft.studyskadden.rest.pojo.Wind;
-
+import com.example.isoft.studyskadden.rest.pojo.WeatherDaily;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,7 +10,6 @@ import java.util.TimeZone;
 
 import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
-import io.realm.annotations.PrimaryKey;
 
 public class MyWeather extends RealmObject{
 
@@ -22,9 +19,9 @@ public class MyWeather extends RealmObject{
     private Date date;
     private String description;
     private String icon;
-    private Double temp;
-    private Double tempMax;
-    private Double tempMin;
+    private Double tempMorning;
+    private Double tempDay;
+    private Double tempEvening;
     private Double pressure;
     private Integer humidity;
     private Double windSpeed;
@@ -32,29 +29,25 @@ public class MyWeather extends RealmObject{
     public MyWeather() {
     }
 
-    public MyWeather(PojoModel model){
+    public MyWeather(WeatherDaily daily){
 
-        if (model!= null){
+        if (daily!= null){
 
-            Main main = model.getMain();
+            date = new Date (daily.getDt()*1000L);
 
-            date = new Date (model.getDt()*1000L);
+            Temp temp = daily.getTemp();
 
-            if (main != null){
-                temp = main.getTemp();
-                tempMax = main.getTempMax();
-                tempMin = main.getTempMin();
-                pressure = main.getPressure();
-                humidity = main.getHumidity();
+            if (temp != null){
+                this.tempMorning = temp.getMorn();
+                this.tempDay = temp.getDay();
+                this.tempEvening = temp.getEve();
             }
 
-            Wind wind = model.getWind();
+            this.pressure = daily.getPressure();
+            this.humidity = daily.getHumidity();
+            this.windSpeed = daily.getSpeed();
 
-            if (wind!=null){
-                windSpeed = wind.getSpeed();
-            }
-
-            Weather weather = model.getWeather().get(0);
+            Weather weather = daily.getWeather().get(0);
             if (weather!=null){
                 description = weather.getDescription();
                 icon = weather.getIcon();
@@ -76,16 +69,16 @@ public class MyWeather extends RealmObject{
         return icon;
     }
 
-    public Double getTemp() {
-        return temp;
+    public Double getTempMorning() {
+        return tempMorning;
     }
 
-    public Double getTempMax() {
-        return tempMax;
+    public Double getTempDay() {
+        return tempDay;
     }
 
-    public Double getTempMin() {
-        return tempMin;
+    public Double getTempEvening() {
+        return tempEvening;
     }
 
     public Double getPressure() {
@@ -107,7 +100,7 @@ public class MyWeather extends RealmObject{
 
     @Override
     public String toString() {
-        return " date " + getDateReadable() + " temp " + temp + " tempMax " + tempMax + " tempMin " + tempMin + " pressure "
+        return " date " + getDateReadable() + " tempMorning " + tempMorning + " tempDay " + tempDay + " tempEvening " + tempEvening + " pressure "
                 + pressure + " humidity " + humidity + " windSpeed " + windSpeed + " description " + description + " icon " + icon;
     }
 

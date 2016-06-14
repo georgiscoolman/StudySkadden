@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.isoft.studyskadden.R;
-import com.example.isoft.studyskadden.entities.City;
+import com.example.isoft.studyskadden.entities.MyCity;
 import com.example.isoft.studyskadden.entities.MyWeather;
 import com.example.isoft.studyskadden.presenters.WeatherPresenter;
 import com.example.isoft.studyskadden.rest.RestApi;
@@ -21,7 +21,6 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.Realm;
 
 public class WeatherActivity extends BaseActivity implements WeatherView, SwipeRefreshLayout.OnRefreshListener{
 
@@ -65,15 +64,15 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
     }
 
     @Override
-    public void showResponse(City city) {
+    public void showResponse(MyCity city) {
         if (city != null){
             cityCountry.setVisibility(View.VISIBLE);
             cityCountry.setText(String.format(this.getString(R.string.city_country_format), city.getName(), city.getCountry()));
 
-            MyWeather weather = (MyWeather) city.getWeatherLog().get(0);
+            MyWeather weather = city.getWeatherLog().get(0);
 
             if (weather != null){
-                Double tmp = weather.getTemp();
+                Double tmp = weather.getTempMorning();
                 if (tmp!=null) {
                     temp.setVisibility(View.VISIBLE);
                     temp.setText(String.format(getString(R.string.temp_format), String.valueOf(Math.round(tmp))));
@@ -85,7 +84,7 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
                 Glide.with(this).load(url).into(icon);
 
 
-                Double tmpMax = weather.getTemp();
+                Double tmpMax = weather.getTempMorning();
                 if (tmpMax!=null) {
                     tempMax.setVisibility(View.VISIBLE);
                     tempMax.setText(String.format(getString(R.string.max_temp_format), String.valueOf(Math.round(tmpMax))));
@@ -93,7 +92,7 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
                     tempMax.setVisibility(View.GONE);
                 }
 
-                Double tmpMin = weather.getTemp();
+                Double tmpMin = weather.getTempMorning();
                 if (tmpMin!=null) {
                     tempMin.setVisibility(View.VISIBLE);
                     tempMin.setText(String.format(getString(R.string.min_temp_format), String.valueOf(Math.round(tmpMin))));

@@ -1,8 +1,8 @@
 package com.example.isoft.studyskadden.presenters;
 
-import com.example.isoft.studyskadden.entities.City;
+import com.example.isoft.studyskadden.entities.MyCity;
 import com.example.isoft.studyskadden.models.WeatherModel;
-import com.example.isoft.studyskadden.rest.pojo.PojoModel;
+import com.example.isoft.studyskadden.rest.pojo.ForecastDaily;
 import com.example.isoft.studyskadden.ui.WeatherView;
 
 import javax.inject.Inject;
@@ -29,15 +29,15 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
 
     public void onUpdate() {
 
-        Observable<PojoModel> pojoModelObservable = model.request("Minsk");
+        Observable<ForecastDaily> dailyObservable = model.request("Minsk");
 
-        Observable observable = pojoModelObservable
+        Observable observable = dailyObservable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
         Subscription subscription = observable.subscribe(pojoModel -> {
                     realm.beginTransaction();
-                    City city = new City((PojoModel) pojoModel, realm);
+                    MyCity city = new MyCity((ForecastDaily) pojoModel, realm);
                     realm.commitTransaction();
                     mMvpView.startUpdate();
                     mMvpView.showResponse(city);
