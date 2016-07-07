@@ -18,4 +18,12 @@ public class OpenWeatherModel implements WeatherModel {
         return weatherService.getWheatherReportByCityName(name);
 
     }
+
+    @Override
+    public Observable<ForecastDaily> request(long id) {
+
+        RestApi weatherService = RetrofitServiceFactory.getInstance();
+
+        return weatherService.getWheatherReportByCityId(id);
+    }
 }

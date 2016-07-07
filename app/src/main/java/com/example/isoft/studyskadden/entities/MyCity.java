@@ -46,22 +46,6 @@ public class MyCity extends RealmObject {
         }
     }
 
-    public MyCity(ForecastDaily forecast, Realm realm){
-        this(forecast);
-        if (realm != null){
-
-            // need to drop old weather log if it exist
-            MyCity oldInstance = realm.where(MyCity.class).equalTo("id", this.id).findFirst();
-            if (oldInstance !=null) {
-                RealmList<MyWeather> oldLog = (RealmList<MyWeather>) oldInstance.getWeatherLog();
-                if (oldLog != null)
-                    oldLog.deleteAllFromRealm();
-            }
-
-            realm.copyToRealmOrUpdate(this);
-        }
-    }
-
     public Long getId() {
         return id;
     }

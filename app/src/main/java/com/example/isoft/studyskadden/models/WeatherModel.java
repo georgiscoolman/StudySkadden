@@ -9,4 +9,5 @@ import rx.Observable;
 public interface WeatherModel {
 
     public Observable<ForecastDaily> request(String name);
+    public Observable<ForecastDaily> request(long id);
 }

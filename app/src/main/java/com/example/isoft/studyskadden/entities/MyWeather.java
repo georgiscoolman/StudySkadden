@@ -13,6 +13,16 @@ import io.realm.annotations.Ignore;
 
 public class MyWeather extends RealmObject{
 
+    public static final String DATE = "date";
+    public static final String DESCRIPTION = "description";
+    public static final String ICON = "icon";
+    public static final String TEMP_MORNING = "tempMorning";
+    public static final String TEMP_DAY = "tempDay";
+    public static final String TEMP_EVENING = "tempEvening";
+    public static final String PRESSURE = "pressure";
+    public static final String HUMIDITY = "humidity";
+    public static final String WIND_SPEED = "windSpeed";
+
     @Ignore
     public SimpleDateFormat sdfmad = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
