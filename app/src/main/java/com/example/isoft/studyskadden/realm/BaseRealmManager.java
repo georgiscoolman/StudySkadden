@@ -51,6 +51,4 @@ public abstract class BaseRealmManager<T extends RealmObject> {
         return result;
     }
 
-
-
 }
