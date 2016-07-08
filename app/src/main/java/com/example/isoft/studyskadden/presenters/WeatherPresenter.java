@@ -1,5 +1,6 @@
 package com.example.isoft.studyskadden.presenters;
 
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import com.example.isoft.studyskadden.PreviewCityWeather;
@@ -38,8 +39,6 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
 
     private final static String FORECAST_DAILY_SUBSCRIBER = "forecastDailySubscriber";
 
-
-
     private Subscriber<ForecastDaily> getForecastObservable(){
 
         Subscriber<ForecastDaily> forecastDailySubscriber = new Subscriber<ForecastDaily>() {
@@ -58,8 +57,11 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
 
             @Override
             public void onError(Throwable e) {
-                Log.d(FORECAST_DAILY_SUBSCRIBER, "onError " + e.toString());
                 mMvpView.stopUpdate();
+                if (e!=null) {
+                    Log.d(FORECAST_DAILY_SUBSCRIBER, "onError " + e.toString());
+                    mMvpView.showMessage(e.getMessage());
+                }
             }
 
             @Override

@@ -1,8 +1,10 @@
 package com.example.isoft.studyskadden.ui;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -135,5 +137,17 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
     @Override
     public boolean onQueryTextChange(String newText) {
         return false;
+    }
+
+    @Override
+    public void showMessage(String message){
+        AlertDialog messDialog = new AlertDialog.Builder(this)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .create();
+
+        messDialog.show();
     }
 }
