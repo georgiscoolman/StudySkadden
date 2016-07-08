@@ -4,6 +4,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import com.example.isoft.studyskadden.PreviewCityWeather;
+import com.example.isoft.studyskadden.R;
 import com.example.isoft.studyskadden.entities.MyCity;
 import com.example.isoft.studyskadden.realm.MyCityRealmManager;
 import com.example.isoft.studyskadden.models.WeatherModel;
@@ -60,7 +61,7 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
                 mMvpView.stopUpdate();
                 if (e!=null) {
                     Log.d(FORECAST_DAILY_SUBSCRIBER, "onError " + e.toString());
-                    mMvpView.showMessage(e.getMessage());
+                    mMvpView.showMessage(R.string.network_trouble ,e.getMessage());
                 }
             }
 

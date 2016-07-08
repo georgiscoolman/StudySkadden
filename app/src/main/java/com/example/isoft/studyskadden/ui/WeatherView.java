@@ -14,6 +14,6 @@ public interface WeatherView extends MvpView {
 
     public void stopUpdate();
 
-    public void showMessage(String message);
+    public void showMessage(int titleResId, String message);
 
 }

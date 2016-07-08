@@ -140,8 +140,9 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
     }
 
     @Override
-    public void showMessage(String message){
+    public void showMessage(int titleResId, String message){
         AlertDialog messDialog = new AlertDialog.Builder(this)
+                .setTitle(getString(titleResId))
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                     dialog.dismiss();
