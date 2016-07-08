@@ -116,7 +116,7 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.menu_refresh){
-            weatherPresenter.updateAllView();
+            weatherPresenter.refreshData();
         }
 
         return super.onOptionsItemSelected(item);
