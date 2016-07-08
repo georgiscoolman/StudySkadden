@@ -20,7 +20,9 @@ public class RetrofitServiceFactory {
         client
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS);
+                .readTimeout(10, TimeUnit.SECONDS)
+                .followRedirects(true)
+                .followSslRedirects(true);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(RestApi.URL)
@@ -40,7 +42,9 @@ public class RetrofitServiceFactory {
                     client
                             .connectTimeout(10, TimeUnit.SECONDS)
                             .writeTimeout(10, TimeUnit.SECONDS)
-                            .readTimeout(30, TimeUnit.SECONDS);
+                            .readTimeout(10, TimeUnit.SECONDS)
+                            .followRedirects(true)
+                            .followSslRedirects(true);
 
                     Retrofit retrofit = new Retrofit.Builder()
                             .baseUrl(RestApi.URL)

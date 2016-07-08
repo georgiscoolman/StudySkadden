@@ -38,33 +38,41 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
 
     private final static String FORECAST_DAILY_SUBSCRIBER = "forecastDailySubscriber";
 
-    Subscriber<ForecastDaily> forecastDailySubscriber = new Subscriber<ForecastDaily>() {
-        @Override
-        public void onStart() {
-            Log.d(FORECAST_DAILY_SUBSCRIBER, "onStart");
-            mMvpView.startUpdate();
-        }
 
-        @Override
-        public void onCompleted() { // show results
-            Log.d(FORECAST_DAILY_SUBSCRIBER, "onCompleted");
-            updateAllView();
-            mMvpView.stopUpdate();
-        }
 
-        @Override
-        public void onError(Throwable e) {
-            Log.d(FORECAST_DAILY_SUBSCRIBER, "onError " + e.toString());
-            mMvpView.stopUpdate();
-        }
+    private Subscriber<ForecastDaily> getForecastObservable(){
 
-        @Override
-        public void onNext(ForecastDaily forecastDaily) { // saving items
-            MyCity city = new MyCity(forecastDaily);
-            Log.d(FORECAST_DAILY_SUBSCRIBER, "onNext " + city.getName());
-            myCityRealmManager.save(realm,city);
-        }
-    };
+        Subscriber<ForecastDaily> forecastDailySubscriber = new Subscriber<ForecastDaily>() {
+            @Override
+            public void onStart() {
+                Log.d(FORECAST_DAILY_SUBSCRIBER, "onStart");
+                mMvpView.startUpdate();
+            }
+
+            @Override
+            public void onCompleted() { // show results
+                Log.d(FORECAST_DAILY_SUBSCRIBER, "onCompleted");
+                updateAllView();
+                mMvpView.stopUpdate();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(FORECAST_DAILY_SUBSCRIBER, "onError " + e.toString());
+                mMvpView.stopUpdate();
+            }
+
+            @Override
+            public void onNext(ForecastDaily forecastDaily) { // saving items
+                MyCity city = new MyCity(forecastDaily);
+                Log.d(FORECAST_DAILY_SUBSCRIBER, "onNext " + city.getName());
+                myCityRealmManager.save(realm,city);
+            }
+        };
+
+        return forecastDailySubscriber;
+
+    }
 
     public void refreshData() {
         RealmResults<MyCity> allCities =  myCityRealmManager.getAll(realm);
@@ -83,7 +91,7 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        Subscription subscription = observable.subscribe(forecastDailySubscriber);
+        Subscription subscription = observable.subscribe(getForecastObservable());
 
         mSubscriptions.add(subscription);
     }
@@ -95,7 +103,7 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        Subscription subscription = observable.subscribe(forecastDailySubscriber);
+        Subscription subscription = observable.subscribe(getForecastObservable());
 
         mSubscriptions.add(subscription);
     }
