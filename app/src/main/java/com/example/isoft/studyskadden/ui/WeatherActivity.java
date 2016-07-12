@@ -108,6 +108,19 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
                         super.onChanged();
                         checkAdapterIsEmpty();
                     }
+
+                    @Override
+                    public void onItemRangeInserted(int positionStart, int itemCount) {
+                        super.onItemRangeInserted(positionStart, itemCount);
+                        checkAdapterIsEmpty();
+                    }
+
+                    @Override
+                    public void onItemRangeRemoved(int positionStart, int itemCount) {
+                        super.onItemRangeRemoved(positionStart, itemCount);
+                        checkAdapterIsEmpty();
+                    }
+
                 });
                 recyclerView.setAdapter(mAdapter);
                 checkAdapterIsEmpty();
