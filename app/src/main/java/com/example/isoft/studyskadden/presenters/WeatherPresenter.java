@@ -1,12 +1,10 @@
 package com.example.isoft.studyskadden.presenters;
 
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import com.example.isoft.studyskadden.PreviewCityWeather;
 import com.example.isoft.studyskadden.R;
 import com.example.isoft.studyskadden.entities.MyCity;
-import com.example.isoft.studyskadden.realm.MyCityRealmManager;
 import com.example.isoft.studyskadden.models.WeatherModel;
 import com.example.isoft.studyskadden.rest.pojo.ForecastDaily;
 import com.example.isoft.studyskadden.ui.WeatherView;
@@ -16,7 +14,6 @@ import java.util.LinkedList;
 
 import javax.inject.Inject;
 
-import io.realm.Realm;
 import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
@@ -30,8 +27,6 @@ import rx.schedulers.Schedulers;
 public class WeatherPresenter extends BasePresenter<WeatherView>{
 
     private WeatherModel model;
-    private Realm realm;
-    private MyCityRealmManager myCityRealmManager;
 
     @Inject
     public WeatherPresenter(WeatherModel model) {
@@ -69,7 +64,7 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
             public void onNext(ForecastDaily forecastDaily) { // saving items
                 MyCity city = new MyCity(forecastDaily);
                 Log.d(FORECAST_DAILY_SUBSCRIBER, "onNext " + city.getName());
-                myCityRealmManager.save(realm,city);
+                model.save(city);
             }
         };
 
@@ -78,7 +73,7 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
     }
 
     public void refreshData() {
-        RealmResults<MyCity> allCities =  myCityRealmManager.getAll(realm);
+        RealmResults<MyCity> allCities =  model.getAll();
         LinkedList<Observable<ForecastDaily>> observables = new LinkedList<>();
 
         for (MyCity city : allCities) {
@@ -112,14 +107,14 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
     }
 
     public void removeCity(long id){
-        myCityRealmManager.remove(realm, id);
+        model.remove(id);
         updateAllView();
     }
 
     public void updateAllView(){
         mMvpView.startUpdate();
 
-        RealmResults<MyCity> allCities =  myCityRealmManager.getAll(realm);
+        RealmResults<MyCity> allCities =  model.getAll();
         ArrayList<PreviewCityWeather> weathers = PreviewCityWeather.fromList(allCities);
 
         mMvpView.refreshView(weathers);
@@ -127,18 +122,11 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
     }
 
     @Override
-    public void attachView(WeatherView mvpView) {
-        realm = Realm.getDefaultInstance();
-        myCityRealmManager = new MyCityRealmManager();
-        super.attachView(mvpView);
-    }
-
-    @Override
     public void detachView() {
         if (mSubscriptions.hasSubscriptions() && !mSubscriptions.isUnsubscribed()) {
             mMvpView.stopUpdate();
         }
-        realm.close();
+        model.closeDBconnection();
         super.detachView();
     }
 
