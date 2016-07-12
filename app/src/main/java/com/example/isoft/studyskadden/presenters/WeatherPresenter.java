@@ -1,5 +1,6 @@
 package com.example.isoft.studyskadden.presenters;
 
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.example.isoft.studyskadden.PreviewCityWeather;
@@ -9,11 +10,16 @@ import com.example.isoft.studyskadden.models.WeatherModel;
 import com.example.isoft.studyskadden.rest.pojo.ForecastDaily;
 import com.example.isoft.studyskadden.ui.WeatherView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 import javax.inject.Inject;
 
+import io.realm.RealmObject;
 import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
@@ -47,7 +53,6 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
             @Override
             public void onCompleted() { // show results
                 Log.d(FORECAST_DAILY_SUBSCRIBER, "onCompleted");
-                updateAllView();
                 mMvpView.stopUpdate();
             }
 
@@ -64,7 +69,7 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
             public void onNext(ForecastDaily forecastDaily) { // saving items
                 MyCity city = new MyCity(forecastDaily);
                 Log.d(FORECAST_DAILY_SUBSCRIBER, "onNext " + city.getName());
-                model.save(city);
+                addCity(city);
             }
         };
 
@@ -106,19 +111,37 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
         mSubscriptions.add(subscription);
     }
 
-    public void removeCity(long id){
-        model.remove(id);
-        updateAllView();
+    public void removeCity(RecyclerView.ViewHolder viewHolder){
+        model.remove(viewHolder.getItemId());
+        mMvpView.removeCity(viewHolder.getAdapterPosition());
     }
 
-    public void updateAllView(){
+    public void addCity(MyCity myCity){
+        RealmObject savedCity = model.save(myCity);
+        PreviewCityWeather previewCityWeather = new PreviewCityWeather(savedCity);
+        EventBus.getDefault().post(previewCityWeather);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCityAdded(PreviewCityWeather previewCityWeather) {
+        mMvpView.addCity(previewCityWeather);
+    }
+
+    public void setCityList(){
         mMvpView.startUpdate();
 
         RealmResults<MyCity> allCities =  model.getAll();
         ArrayList<PreviewCityWeather> weathers = PreviewCityWeather.fromList(allCities);
 
-        mMvpView.refreshView(weathers);
+        mMvpView.setCityList(weathers);
         mMvpView.stopUpdate();
+    }
+
+    @Override
+    public void attachView(WeatherView mvpView) {
+        model.init();
+        EventBus.getDefault().register(this);
+        super.attachView(mvpView);
     }
 
     @Override
@@ -127,6 +150,7 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
             mMvpView.stopUpdate();
         }
         model.closeDBconnection();
+        EventBus.getDefault().unregister(this);
         super.detachView();
     }
 

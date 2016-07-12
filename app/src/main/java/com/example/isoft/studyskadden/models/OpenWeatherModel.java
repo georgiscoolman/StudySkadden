@@ -7,6 +7,7 @@ import com.example.isoft.studyskadden.rest.RetrofitServiceFactory;
 import com.example.isoft.studyskadden.rest.pojo.ForecastDaily;
 
 import io.realm.Realm;
+import io.realm.RealmObject;
 import io.realm.RealmResults;
 import rx.Observable;
 
@@ -17,31 +18,16 @@ public class OpenWeatherModel implements WeatherModel {
     private MyCityRealmManager myCityRealmManager;
     private Realm realm;
 
-    public OpenWeatherModel() {
-        realm = Realm.getDefaultInstance();
-        myCityRealmManager = new MyCityRealmManager();
-    }
-
     @Override
     public Observable<ForecastDaily> request(String name) {
-
         RestApi weatherService = RetrofitServiceFactory.getInstance();
-
         return weatherService.getWheatherReportByCityName(name);
-
     }
 
     @Override
     public Observable<ForecastDaily> request(long id) {
-
         RestApi weatherService = RetrofitServiceFactory.getInstance();
-
         return weatherService.getWheatherReportByCityId(id);
-    }
-
-    @Override
-    public void closeDBconnection() {
-        realm.close();
     }
 
     @Override
@@ -50,13 +36,23 @@ public class OpenWeatherModel implements WeatherModel {
     }
 
     @Override
-    public void save(MyCity myCity) {
-        myCityRealmManager.save(realm,myCity);
-
+    public RealmObject save(MyCity myCity) {
+        return myCityRealmManager.save(realm,myCity);
     }
 
     @Override
     public void remove(long id) {
+        myCityRealmManager.remove(realm, id);
+    }
 
+    @Override
+    public void init() {
+        realm = Realm.getDefaultInstance();
+        myCityRealmManager = new MyCityRealmManager();
+    }
+
+    @Override
+    public void closeDBconnection() {
+        realm.close();
     }
 }

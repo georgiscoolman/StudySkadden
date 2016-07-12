@@ -4,10 +4,9 @@ import com.example.isoft.studyskadden.entities.MyCity;
 import com.example.isoft.studyskadden.entities.MyWeather;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
-import io.realm.Realm;
 import io.realm.RealmList;
+import io.realm.RealmObject;
 import io.realm.RealmResults;
 
 /**
@@ -18,10 +17,10 @@ public class PreviewCityWeather {
     private MyCity city;
     private MyWeather lastWeather;
 
-    public PreviewCityWeather(MyCity city) {
-        this.city = city;
+    public PreviewCityWeather(RealmObject city) {
+        this.city = ((MyCity) city);
 
-        RealmList<MyWeather> weathers = (RealmList<MyWeather>) city.getWeatherLog();
+        RealmList<MyWeather> weathers = (RealmList<MyWeather>) this.city.getWeatherLog();
 
         lastWeather = weathers.sort(MyWeather.DATE).first();
     }

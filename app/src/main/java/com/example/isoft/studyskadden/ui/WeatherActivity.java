@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.isoft.studyskadden.CitiesAdapter;
@@ -33,7 +32,6 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
     WeatherPresenter weatherPresenter;
 
     @BindView(R.id.swiperefresh) SwipeRefreshLayout swipeRefreshLayout;
-    @BindView(R.id.sv_list_cities) ScrollView scrollView;
     @BindView(R.id.rv_cities) RecyclerView recyclerView;
     @BindView(R.id.tv_empty_list) TextView emptyView;
 
@@ -51,7 +49,7 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
 
         weatherPresenter.attachView(this);
 
-        weatherPresenter.updateAllView();
+        weatherPresenter.setCityList();
 
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setOnRefreshListener(this);
@@ -60,13 +58,14 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
+                mAdapter.onItemMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                return true;
             }
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 Log.d("onSwiped" , viewHolder.toString() + " " + swipeDir);
-                weatherPresenter.removeCity(viewHolder.getItemId());
+                weatherPresenter.removeCity(viewHolder);
             }
         };
 
@@ -77,34 +76,64 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
 
     @Override
     public void onRefresh() {
-         weatherPresenter.refreshData();
+        if (mAdapter!=null){
+            if (mAdapter.getItemCount()>0)
+                weatherPresenter.refreshData();
+        }
     }
 
     @Override
-    public void refreshView(List<PreviewCityWeather> previewCityWeathers) {
+    public void addCity(PreviewCityWeather previewCityWeather){
+        if (mAdapter != null)
+            mAdapter.addItem(previewCityWeather);
+    }
 
+    @Override
+    public void removeCity(int adapterPosition){
+        if (mAdapter != null)
+            mAdapter.dropItem(adapterPosition);
+    }
+
+    @Override
+    public void setCityList(List<PreviewCityWeather> previewCityWeathers) {
         if (previewCityWeathers!=null) {
-            if (previewCityWeathers.size() > 0) {
-                emptyView.setVisibility(View.GONE);
-                scrollView.setVisibility(View.VISIBLE);
-
-                if (mAdapter != null) {
-                    mAdapter.setCityWeathers(previewCityWeathers);
-                } else {
-                    mAdapter = new CitiesAdapter(this, previewCityWeathers);
-                    mAdapter.setHasStableIds(true);
-                    recyclerView.setAdapter(mAdapter);
-                }
-                mAdapter.notifyDataSetChanged();
-
+            if (mAdapter != null) {
+                mAdapter.updateItems(previewCityWeathers);
             } else {
-                emptyView.setVisibility(View.VISIBLE);
-                scrollView.setVisibility(View.GONE);
+                mAdapter = new CitiesAdapter(this, previewCityWeathers);
+                mAdapter.setHasStableIds(true);
+                mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+                    @Override
+                    public void onChanged() {
+                        super.onChanged();
+                        checkAdapterIsEmpty();
+                    }
+                });
+                recyclerView.setAdapter(mAdapter);
+                checkAdapterIsEmpty();
             }
-
         }else {
-            emptyView.setVisibility(View.VISIBLE);
-            scrollView.setVisibility(View.GONE);
+            hideList();
+        }
+    }
+
+    private void hideList(){
+        emptyView.setVisibility(View.VISIBLE);
+        swipeRefreshLayout.setVisibility(View.GONE);
+        swipeRefreshLayout.setEnabled(false);
+    }
+
+    private void showList(){
+        emptyView.setVisibility(View.GONE);
+        swipeRefreshLayout.setVisibility(View.VISIBLE);
+        swipeRefreshLayout.setEnabled(true);
+    }
+
+    private void checkAdapterIsEmpty() {
+        if (mAdapter.getItemCount() == 0) {
+            hideList();
+        } else {
+            showList();
         }
     }
 
@@ -122,6 +151,14 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
+        MenuItem refreshMenuItem = menu.findItem(R.id.menu_refresh);
+        if (swipeRefreshLayout.isEnabled()){
+            refreshMenuItem.setVisible(true);
+        }
+        else {
+            refreshMenuItem.setVisible(false);
+        }
+
         final MenuItem item = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setQueryHint(getString(R.string.city_name));
@@ -134,7 +171,7 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.menu_refresh){
-            weatherPresenter.refreshData();
+            onRefresh();
         }
 
         return super.onOptionsItemSelected(item);
