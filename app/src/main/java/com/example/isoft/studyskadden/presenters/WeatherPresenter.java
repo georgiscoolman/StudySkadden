@@ -111,6 +111,11 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
         mSubscriptions.add(subscription);
     }
 
+    public void removeCity(long id){
+        myCityRealmManager.remove(realm, id);
+        updateAllView();
+    }
+
     public void updateAllView(){
         mMvpView.startUpdate();
 

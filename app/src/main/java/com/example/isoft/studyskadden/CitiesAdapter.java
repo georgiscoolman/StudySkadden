@@ -36,13 +36,6 @@ public class CitiesAdapter extends RecyclerView.Adapter<CityWeatherViewHolder> {
     public void onBindViewHolder(CityWeatherViewHolder holder, int position) {
         final PreviewCityWeather item = cityWeathers.get(position);
         holder.bind(item,context);
-        holder.root.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                showRemoveCityDialog(item);
-                return false;
-            }
-        });
     }
 
     @Override
@@ -65,19 +58,4 @@ public class CitiesAdapter extends RecyclerView.Adapter<CityWeatherViewHolder> {
         notifyDataSetChanged();
     }
 
-    public void showRemoveCityDialog(PreviewCityWeather weather){
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        final MyCity city = weather.getCity();
-        builder.setTitle(String.format(context.getString(R.string.remove_city_format), city.getName(), city.getCountry()) )
-                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                    /*if (context instanceof WeatherActivity){
-                        ((MainActivity) context).removeCity(city.getId().intValue());
-                    }*/
-                })
-                .setNegativeButton(android.R.string.no, (dialog, which) -> {
-                    dialog.dismiss();
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
 }

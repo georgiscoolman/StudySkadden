@@ -51,4 +51,10 @@ public abstract class BaseRealmManager<T extends RealmObject> {
         return result;
     }
 
+    public void remove(Realm realm, long id) {
+        realm.beginTransaction();
+        realm.where(realmManagerClass).equalTo("id", id).findFirst().deleteFromRealm();
+        realm.commitTransaction();
+    }
+
 }
