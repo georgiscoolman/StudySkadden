@@ -41,9 +41,9 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
 
     private final static String FORECAST_DAILY_SUBSCRIBER = "forecastDailySubscriber";
 
-    private Subscriber<ForecastDaily> getForecastObservable(){
+    private Subscriber<MyCity> getForecastObservable(){
 
-        Subscriber<ForecastDaily> forecastDailySubscriber = new Subscriber<ForecastDaily>() {
+        Subscriber<MyCity> forecastDailySubscriber = new Subscriber<MyCity>() {
             @Override
             public void onStart() {
                 Log.d(FORECAST_DAILY_SUBSCRIBER, "onStart");
@@ -66,8 +66,7 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
             }
 
             @Override
-            public void onNext(ForecastDaily forecastDaily) { // saving items
-                MyCity city = new MyCity(forecastDaily);
+            public void onNext(MyCity city) { // saving items
                 Log.d(FORECAST_DAILY_SUBSCRIBER, "onNext " + city.getName());
                 addCity(city);
             }
@@ -79,10 +78,10 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
 
     public void refreshData() {
         RealmResults<MyCity> allCities =  model.getAll();
-        LinkedList<Observable<ForecastDaily>> observables = new LinkedList<>();
+        LinkedList<Observable<MyCity>> observables = new LinkedList<>();
 
         for (MyCity city : allCities) {
-            Observable<ForecastDaily> dailyObservable = model.request(city.getId())
+            Observable<MyCity> dailyObservable = model.request(city.getId())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread());
             observables.add(dailyObservable);
@@ -100,7 +99,7 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
     }
 
     public void requestCity(String query){
-        Observable<ForecastDaily> dailyObservable = model.request(query);
+        Observable<MyCity> dailyObservable = model.request(query);
 
         Observable observable = dailyObservable
                 .subscribeOn(Schedulers.io())

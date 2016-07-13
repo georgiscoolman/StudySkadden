@@ -12,8 +12,8 @@ import rx.Observable;
  */
 public interface WeatherModel {
 
-    public Observable<ForecastDaily> request(String name);
-    public Observable<ForecastDaily> request(long id);
+    public Observable<MyCity> request(String name);
+    public Observable<MyCity> request(long id);
     public RealmResults<MyCity> getAll();
     public RealmObject save(MyCity myCity);
     public void remove(long id);

@@ -19,15 +19,15 @@ public class OpenWeatherModel implements WeatherModel {
     private Realm realm;
 
     @Override
-    public Observable<ForecastDaily> request(String name) {
+    public Observable<MyCity> request(String name) {
         RestApi weatherService = RetrofitServiceFactory.getInstance();
-        return weatherService.getWheatherReportByCityName(name);
+        return weatherService.getWheatherReportByCityName(name).map(forecastDaily -> new MyCity(forecastDaily));
     }
 
     @Override
-    public Observable<ForecastDaily> request(long id) {
+    public Observable<MyCity> request(long id) {
         RestApi weatherService = RetrofitServiceFactory.getInstance();
-        return weatherService.getWheatherReportByCityId(id);
+        return weatherService.getWheatherReportByCityId(id).map(forecastDaily -> new MyCity(forecastDaily));
     }
 
     @Override
