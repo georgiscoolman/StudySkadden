@@ -1,4 +1,4 @@
-package com.example.isoft.studyskadden;
+package com.example.isoft.studyskadden.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.isoft.studyskadden.viewHolders.CityWeatherViewHolder;
+import com.example.isoft.studyskadden.PreviewCityWeather;
+import com.example.isoft.studyskadden.R;
 import com.example.isoft.studyskadden.entities.MyCity;
 
 import java.util.Collections;
@@ -15,7 +18,7 @@ import java.util.List;
 /**
  * Created by Georg on 22.04.2016.
  */
-public class CitiesAdapter extends RecyclerView.Adapter<CityWeatherViewHolder>{
+public class CitiesAdapter extends RecyclerView.Adapter<CityWeatherViewHolder> implements ItemTouchHelperAdapter{
 
     private  List<PreviewCityWeather> cityWeathers;
     private final LayoutInflater mInflater;
@@ -89,7 +92,8 @@ public class CitiesAdapter extends RecyclerView.Adapter<CityWeatherViewHolder>{
         notifyItemRemoved(position);
     }
 
-    public void onItemMove(int fromPosition, int toPosition) {
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
         if (fromPosition < toPosition) {
             for (int i = fromPosition; i < toPosition; i++) {
                 Collections.swap(cityWeathers, i, i + 1);
@@ -100,18 +104,11 @@ public class CitiesAdapter extends RecyclerView.Adapter<CityWeatherViewHolder>{
             }
         }
         notifyItemMoved(fromPosition, toPosition);
+        return true;
     }
 
-    public boolean isItemInList(long id){
-        boolean isItemInList = false;
-
-        for (PreviewCityWeather cityWeather : cityWeathers) {
-            if (cityWeather.getCity().getId() == id){
-                isItemInList = true;
-            }
-        }
-
-        return isItemInList;
+    @Override
+    public void onItemDismiss(int position) {
     }
 
 }

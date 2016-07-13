@@ -1,14 +1,18 @@
-package com.example.isoft.studyskadden;
+package com.example.isoft.studyskadden.viewHolders;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.isoft.studyskadden.PreviewCityWeather;
+import com.example.isoft.studyskadden.R;
 import com.example.isoft.studyskadden.entities.MyCity;
 import com.example.isoft.studyskadden.entities.MyWeather;
 import com.example.isoft.studyskadden.rest.RestApi;
@@ -19,11 +23,12 @@ import butterknife.ButterKnife;
 /**
  * Created by Georg on 22.04.2016.
  */
-public class CityWeatherViewHolder extends RecyclerView.ViewHolder {
+public class CityWeatherViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder{
 
     private static final String WEB_IMAGES_FORMAT = "%s/img/w/%s.png";
 
     @BindView(R.id.root) CardView root;
+    @BindView(R.id.content) LinearLayout content;
     @BindView(R.id.city_country) TextView cityCountry;
     @BindView(R.id.temp) TextView temp;
     @BindView(R.id.icon) ImageView icon;
@@ -105,4 +110,13 @@ public class CityWeatherViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
+    @Override
+    public void onItemSelected() {
+        content.setBackgroundColor(Color.LTGRAY);
+    }
+
+    @Override
+    public void onItemClear() {
+        content.setBackgroundColor(0);
+    }
 }

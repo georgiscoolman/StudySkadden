@@ -14,9 +14,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.isoft.studyskadden.CitiesAdapter;
+import com.example.isoft.studyskadden.adapters.CitiesAdapter;
 import com.example.isoft.studyskadden.PreviewCityWeather;
 import com.example.isoft.studyskadden.R;
+import com.example.isoft.studyskadden.adapters.SimpleItemTouchHelperCallback;
 import com.example.isoft.studyskadden.presenters.WeatherPresenter;
 
 import java.util.List;
@@ -54,24 +55,6 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setOnRefreshListener(this);
         }
-
-        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                mAdapter.onItemMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                return true;
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                Log.d("onSwiped" , viewHolder.toString() + " " + swipeDir);
-                weatherPresenter.removeCity(viewHolder);
-            }
-        };
-
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-
-        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     @Override
@@ -122,7 +105,13 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
                     }
 
                 });
+
                 recyclerView.setAdapter(mAdapter);
+
+                ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter, weatherPresenter);
+                ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+                touchHelper.attachToRecyclerView(recyclerView);
+
                 checkAdapterIsEmpty();
             }
         }else {
