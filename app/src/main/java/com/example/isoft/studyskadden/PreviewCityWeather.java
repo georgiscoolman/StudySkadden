@@ -14,23 +14,39 @@ import io.realm.RealmResults;
  */
 public class PreviewCityWeather {
 
-    private MyCity city;
-    private MyWeather lastWeather;
+    public Long id;
+    public String name;
+    public String country;
+    public Double tempDay;
+    public String icon;
+    public Double tempEvening;
+    public Double tempMorning;
+    public String description;
+    public Double pressure;
+    public Integer humidity;
+    public Double wind;
+    public String date;
 
     public PreviewCityWeather(RealmObject city) {
-        this.city = ((MyCity) city);
 
-        RealmList<MyWeather> weathers = (RealmList<MyWeather>) this.city.getWeatherLog();
+        MyCity myCity = ((MyCity) city);
+        this.id = myCity.getId();
+        this.name = myCity.getName();
+        this.country = myCity.getCountry();
 
-        lastWeather = weathers.sort(MyWeather.DATE).first();
-    }
+        RealmList<MyWeather> weathers = (RealmList<MyWeather>) myCity.getWeatherLog();
+        MyWeather lastWeather = weathers.sort(MyWeather.DATE).first();
 
-    public MyCity getCity() {
-        return city;
-    }
+        this.tempDay = lastWeather.getTempDay();
+        this.icon = lastWeather.getIcon();
+        this.tempEvening = lastWeather.getTempEvening();
+        this.tempMorning = lastWeather.getTempMorning();
+        this.description = lastWeather.getDescription();
+        this.pressure = lastWeather.getPressure();
+        this.humidity = lastWeather.getHumidity();
+        this.wind = lastWeather.getWindSpeed();
+        this.date = lastWeather.getDateReadable();
 
-    public MyWeather getLastWeather() {
-        return lastWeather;
     }
 
     public static ArrayList<PreviewCityWeather> fromList(RealmResults<MyCity> cities){

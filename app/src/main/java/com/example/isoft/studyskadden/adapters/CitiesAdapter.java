@@ -51,10 +51,7 @@ public class CitiesAdapter extends RecyclerView.Adapter<CityWeatherViewHolder> i
     public long getItemId(int position) {
 
         PreviewCityWeather item = cityWeathers.get(position);
-
-        MyCity city = item.getCity();
-
-        return city.getId();
+        return item.id;
     }
 
     public void updateItems(List<PreviewCityWeather> cityWeathers){
@@ -65,11 +62,10 @@ public class CitiesAdapter extends RecyclerView.Adapter<CityWeatherViewHolder> i
 
     public void addItem(PreviewCityWeather newItem){
         int newItemPosition = -1;
-        long insertCityId = newItem.getCity().getId();
-        Log.d("CitiesAdapter", "insertCityId " + insertCityId);
+        Log.d("CitiesAdapter", "insertCityId " + newItem.id);
 
         for (PreviewCityWeather cityWeather : cityWeathers) {
-            if (cityWeather.getCity().getId() == insertCityId){
+            if (cityWeather.id.equals(newItem.id)){
                 newItemPosition = cityWeathers.indexOf(cityWeather);
                 break;
             }

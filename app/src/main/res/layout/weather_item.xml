@@ -2,7 +2,7 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/root"
+    android:id="@+id/card_weather"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardUseCompatPadding="true"
@@ -13,7 +13,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
-        android:id="@+id/content"
+        android:id="@+id/linear_content"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -23,7 +23,7 @@
         android:paddingTop="@dimen/activity_vertical_margin">
 
         <TextView
-            android:id="@+id/city_country"
+            android:id="@+id/text_city_country"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="16dp"
@@ -41,13 +41,13 @@
 
             <ImageView
                 android:layout_marginRight="8dp"
-                android:id="@+id/icon"
+                android:id="@+id/image_icon"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:scaleType="fitXY"/>
 
             <TextView
-                android:id="@+id/temp"
+                android:id="@+id/text_temp_day"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="30sp"
@@ -62,13 +62,13 @@
                 android:gravity="right">
 
                 <TextView
-                    android:id="@+id/temp_max"
+                    android:id="@+id/text_temp_morning"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.RobotoSlab.Light"/>
 
                 <TextView
-                    android:id="@+id/temp_min"
+                    android:id="@+id/text_temp_evening"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.RobotoSlab.Light"/>
@@ -78,7 +78,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/descr"
+            android:id="@+id/text_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="16dp"
@@ -98,21 +98,21 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/pressure"
+                    android:id="@+id/text_pressure"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.RobotoSlab.Light"
                     />
 
                 <TextView
-                    android:id="@+id/humidity"
+                    android:id="@+id/text_humidity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.RobotoSlab.Light"
                     />
 
                 <TextView
-                    android:id="@+id/wind"
+                    android:id="@+id/text_wind"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.RobotoSlab.Light"
@@ -124,14 +124,12 @@
 
         <TextView
             android:paddingTop="8dp"
-            android:id="@+id/date"
+            android:id="@+id/text_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.RobotoSlab.Light"
             android:gravity="right"/>
 
-
     </LinearLayout>
-
 
 </android.support.v7.widget.CardView>

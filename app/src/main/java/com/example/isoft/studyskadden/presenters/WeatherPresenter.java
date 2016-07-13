@@ -61,7 +61,7 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
                 mMvpView.stopUpdate();
                 if (e!=null) {
                     Log.d(FORECAST_DAILY_SUBSCRIBER, "onError " + e.toString());
-                    mMvpView.showMessage(R.string.network_trouble ,e.getMessage());
+                    mMvpView.showMessage(R.string.trouble ,e.getMessage());
                 }
             }
 

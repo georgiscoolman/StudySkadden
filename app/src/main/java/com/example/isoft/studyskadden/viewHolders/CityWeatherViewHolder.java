@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -13,8 +12,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.isoft.studyskadden.PreviewCityWeather;
 import com.example.isoft.studyskadden.R;
-import com.example.isoft.studyskadden.entities.MyCity;
-import com.example.isoft.studyskadden.entities.MyWeather;
 import com.example.isoft.studyskadden.rest.RestApi;
 
 import butterknife.BindView;
@@ -27,18 +24,18 @@ public class CityWeatherViewHolder extends RecyclerView.ViewHolder implements It
 
     private static final String WEB_IMAGES_FORMAT = "%s/img/w/%s.png";
 
-    @BindView(R.id.root) CardView root;
-    @BindView(R.id.content) LinearLayout content;
-    @BindView(R.id.city_country) TextView cityCountry;
-    @BindView(R.id.temp) TextView temp;
-    @BindView(R.id.icon) ImageView icon;
-    @BindView(R.id.temp_min) TextView tempMin;
-    @BindView(R.id.temp_max) TextView tempMax;
-    @BindView(R.id.descr) TextView description;
-    @BindView(R.id.pressure) TextView pressure;
-    @BindView(R.id.humidity) TextView humidity;
-    @BindView(R.id.wind) TextView wind;
-    @BindView(R.id.date) TextView date;
+    @BindView(R.id.card_weather) CardView mCardView;
+    @BindView(R.id.linear_content) LinearLayout mLinearLayoutContent;
+    @BindView(R.id.text_city_country) TextView mTextViewCityCountry;
+    @BindView(R.id.text_temp_day) TextView mTextViewTempDay;
+    @BindView(R.id.image_icon) ImageView mImageViewIcon;
+    @BindView(R.id.text_temp_evening) TextView mTextViewTempEvening;
+    @BindView(R.id.text_temp_morning) TextView mTextViewTempMorning;
+    @BindView(R.id.text_description) TextView mTextViewDescription;
+    @BindView(R.id.text_pressure) TextView mTextViewPressure;
+    @BindView(R.id.text_humidity) TextView mTextViewHumidity;
+    @BindView(R.id.text_wind) TextView mTextViewWind;
+    @BindView(R.id.text_date) TextView mTextViewDate;
 
     public CityWeatherViewHolder(View itemView) {
         super(itemView);
@@ -46,77 +43,50 @@ public class CityWeatherViewHolder extends RecyclerView.ViewHolder implements It
     }
 
     public void bind(PreviewCityWeather item, Context context) {
-        MyCity city = item.getCity();
-        MyWeather weather = item.getLastWeather();
 
-        if (city != null){
-            cityCountry.setVisibility(View.VISIBLE);
-            cityCountry.setText(String.format(context.getString(R.string.city_country_format), city.getName(), city.getCountry()));
+        setTextValues(context, mTextViewCityCountry, R.string.city_country_format, item.name, item.country);
+        setTextValues(context, mTextViewTempDay, R.string.temp_format, Math.round(item.tempDay));
 
-            if (weather != null){
-                Double tmp = weather.getTempMorning();
-                if (tmp!=null) {
-                    temp.setVisibility(View.VISIBLE);
-                    temp.setText(String.format(context.getString(R.string.temp_format), String.valueOf(Math.round(tmp))));
-                }else {
-                    temp.setVisibility(View.GONE);
-                }
+        String url = String.format(WEB_IMAGES_FORMAT, RestApi.URL, item.icon);
+        Glide.with(context).load(url).into(mImageViewIcon);
 
-                String url = String.format(WEB_IMAGES_FORMAT, RestApi.URL, weather.getIcon());
-                Glide.with(context).load(url).into(icon);
+        setTextValues(context, mTextViewTempMorning, R.string.max_temp_format, Math.round(item.tempMorning));
+        setTextValues(context, mTextViewTempEvening, R.string.min_temp_format, Math.round(item.tempEvening));
 
+        setTextValue(mTextViewDescription, item.description);
 
-                Double tmpMax = weather.getTempMorning();
-                if (tmpMax!=null) {
-                    tempMax.setVisibility(View.VISIBLE);
-                    tempMax.setText(String.format(context.getString(R.string.max_temp_format), String.valueOf(Math.round(tmpMax))));
-                }else {
-                    tempMax.setVisibility(View.GONE);
-                }
+        setTextValues(context, mTextViewPressure, R.string.pressure_format, item.pressure);
+        setTextValues(context, mTextViewHumidity, R.string.humidity_format, item.humidity);
+        setTextValues(context, mTextViewWind, R.string.wind_format, item.wind);
 
-                Double tmpMin = weather.getTempMorning();
-                if (tmpMin!=null) {
-                    tempMin.setVisibility(View.VISIBLE);
-                    tempMin.setText(String.format(context.getString(R.string.min_temp_format), String.valueOf(Math.round(tmpMin))));
-                }else {
-                    tempMin.setVisibility(View.GONE);
-                }
+        setTextValue(mTextViewDate, item.date);
+    }
 
-                description.setText(weather.getDescription());
-
-                Double prs = weather.getPressure();
-                if (prs!=null) {
-                    pressure.setVisibility(View.VISIBLE);
-                    pressure.setText(String.format(context.getString(R.string.pressure_format), String.valueOf(Math.round(prs))));
-                }else {
-                    pressure.setVisibility(View.GONE);
-                }
-
-                humidity.setText(String.format(context.getString(R.string.humidity_format), String.valueOf(weather.getHumidity())));
-
-                Double wnd = weather.getWindSpeed();
-                if (wnd!=null) {
-                    wind.setVisibility(View.VISIBLE);
-                    wind.setText(String.format(context.getString(R.string.wind_format), String.valueOf(Math.round(wnd))));
-                }else {
-                    wind.setVisibility(View.GONE);
-                }
-
-                date.setText(weather.getDateReadable());
-            }
+    private void setTextValues(Context context, TextView textView, int formatStringResId, Object... values){
+        if (values!=null) {
+            textView.setVisibility(View.VISIBLE);
+            textView.setText(String.format(context.getString(formatStringResId), values));
+        }else {
+            textView.setVisibility(View.GONE);
         }
-        else {
-            cityCountry.setVisibility(View.GONE);
+    }
+
+    private void setTextValue(TextView textView, String value){
+        if (value!=null) {
+            textView.setVisibility(View.VISIBLE);
+            textView.setText(value);
+        }else {
+            textView.setVisibility(View.GONE);
         }
     }
 
     @Override
     public void onItemSelected() {
-        content.setBackgroundColor(Color.LTGRAY);
+        mLinearLayoutContent.setBackgroundColor(Color.LTGRAY);
     }
 
     @Override
     public void onItemClear() {
-        content.setBackgroundColor(0);
+        mLinearLayoutContent.setBackgroundColor(0);
     }
 }
