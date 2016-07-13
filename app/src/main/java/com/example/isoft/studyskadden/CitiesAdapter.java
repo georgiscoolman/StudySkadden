@@ -2,6 +2,7 @@ package com.example.isoft.studyskadden;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,8 +61,27 @@ public class CitiesAdapter extends RecyclerView.Adapter<CityWeatherViewHolder>{
     }
 
     public void addItem(PreviewCityWeather newItem){
-        cityWeathers.add(newItem);
-        notifyItemInserted(cityWeathers.size()-1);
+        int newItemPosition = -1;
+        long insertCityId = newItem.getCity().getId();
+        Log.d("CitiesAdapter", "insertCityId " + insertCityId);
+
+        for (PreviewCityWeather cityWeather : cityWeathers) {
+            if (cityWeather.getCity().getId() == insertCityId){
+                newItemPosition = cityWeathers.indexOf(cityWeather);
+                break;
+            }
+        }
+
+        Log.d("CitiesAdapter", "adding Item at position " + newItemPosition);
+
+        if (newItemPosition != -1){
+            cityWeathers.set(newItemPosition, newItem);
+            notifyItemChanged(newItemPosition);
+        }else {
+            cityWeathers.add(newItem);
+            notifyItemInserted(cityWeathers.indexOf(newItem));
+        }
+
     }
 
     public void dropItem(int position) {
@@ -80,6 +100,18 @@ public class CitiesAdapter extends RecyclerView.Adapter<CityWeatherViewHolder>{
             }
         }
         notifyItemMoved(fromPosition, toPosition);
+    }
+
+    public boolean isItemInList(long id){
+        boolean isItemInList = false;
+
+        for (PreviewCityWeather cityWeather : cityWeathers) {
+            if (cityWeather.getCity().getId() == id){
+                isItemInList = true;
+            }
+        }
+
+        return isItemInList;
     }
 
 }

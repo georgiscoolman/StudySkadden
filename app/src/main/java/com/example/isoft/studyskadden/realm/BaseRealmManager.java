@@ -44,9 +44,13 @@ public abstract class BaseRealmManager<T extends RealmObject> {
         return result;
     }
 
-    public T getById(Realm realm, String id) {
+    public boolean isIdExist(Realm realm, long id) {
+        boolean result = false;
         realm.beginTransaction();
-        T result = realm.where(realmManagerClass).equalTo("id", id).findFirst();
+        long cnt = realm.where(realmManagerClass).equalTo("id", id).count();
+        if (cnt > 0) {
+            result = true;
+        }
         realm.commitTransaction();
         return result;
     }

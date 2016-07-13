@@ -19,4 +19,5 @@ public interface WeatherModel {
     public void remove(long id);
     public void closeDBconnection();
     public void init();
+    public boolean isItemSaved(long id);
 }

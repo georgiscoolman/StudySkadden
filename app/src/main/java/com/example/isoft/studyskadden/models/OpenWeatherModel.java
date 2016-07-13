@@ -55,4 +55,8 @@ public class OpenWeatherModel implements WeatherModel {
     public void closeDBconnection() {
         realm.close();
     }
+
+    public boolean isItemSaved(long id){
+        return myCityRealmManager.isIdExist(realm,id);
+    }
 }
