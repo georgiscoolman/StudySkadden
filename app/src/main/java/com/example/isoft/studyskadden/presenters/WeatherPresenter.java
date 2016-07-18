@@ -7,19 +7,14 @@ import android.util.Log;
 import com.example.isoft.studyskadden.PreviewCityWeather;
 import com.example.isoft.studyskadden.R;
 import com.example.isoft.studyskadden.entities.MyCity;
-import com.example.isoft.studyskadden.models.WeatherModel;
+import com.example.isoft.studyskadden.models.OpenWeatherModel;
 import com.example.isoft.studyskadden.ui.WeatherView;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 import javax.inject.Inject;
 
-import io.realm.RealmObject;
 import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
@@ -32,10 +27,10 @@ import rx.schedulers.Schedulers;
  */
 public class WeatherPresenter extends BasePresenter<WeatherView>{
 
-    private WeatherModel model;
+    private OpenWeatherModel model;
 
     @Inject
-    public WeatherPresenter(WeatherModel model) {
+    public WeatherPresenter(OpenWeatherModel model) {
         this.model = model;
     }
 

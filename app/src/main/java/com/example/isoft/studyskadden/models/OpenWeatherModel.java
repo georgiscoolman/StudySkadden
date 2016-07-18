@@ -8,7 +8,6 @@ import com.example.isoft.studyskadden.entities.MyCity;
 import com.example.isoft.studyskadden.realm.MyCityRealmManager;
 import com.example.isoft.studyskadden.rest.RestApi;
 import com.example.isoft.studyskadden.rest.RetrofitServiceFactory;
-import com.example.isoft.studyskadden.rest.pojo.ForecastDaily;
 
 import io.realm.Realm;
 import io.realm.RealmObject;
@@ -18,13 +17,12 @@ import rx.Observable;
 /**
  * Created by isoft on 07.06.16.
  */
-public class OpenWeatherModel implements WeatherModel {
+public class OpenWeatherModel{
     private MyCityRealmManager myCityRealmManager;
     private Realm realm;
 
     private final static String TAG = "Threading";
 
-    @Override
     public Observable<PreviewCityWeather> request(String name) {
         RestApi weatherService = RetrofitServiceFactory.getInstance();
         return weatherService
@@ -39,7 +37,6 @@ public class OpenWeatherModel implements WeatherModel {
                 });
     }
 
-    @Override
     public Observable<PreviewCityWeather> request(long id) {
         RestApi weatherService = RetrofitServiceFactory.getInstance();
         return weatherService
@@ -54,32 +51,25 @@ public class OpenWeatherModel implements WeatherModel {
                 });
     }
 
-    @Override
     public RealmResults<MyCity> getAll() {
         Log.d(TAG, "getAll" + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
         return myCityRealmManager.getAll(realm);
     }
 
-    @Override
     public void remove(long id) {
         Log.d(TAG, "remove" + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
         myCityRealmManager.remove(realm, id);
     }
 
-    @Override
     public void init() {
         Log.d(TAG, "init" + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
         realm = Realm.getDefaultInstance();
         myCityRealmManager = new MyCityRealmManager();
     }
 
-    @Override
     public void closeDBconnection() {
         Log.d(TAG, "closeDBconnection" + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
         realm.close();
     }
 
-    public boolean isItemSaved(long id){
-        return myCityRealmManager.isIdExist(realm,id);
-    }
 }

@@ -5,7 +5,6 @@ import android.content.Context;
 
 import com.example.isoft.studyskadden.injection.ApplicationContext;
 import com.example.isoft.studyskadden.models.OpenWeatherModel;
-import com.example.isoft.studyskadden.models.WeatherModel;
 
 import javax.inject.Singleton;
 
@@ -37,7 +36,7 @@ public class ApplicationModule {
 
     @Provides
     @Singleton
-    WeatherModel provideWeatherModel() {
+    OpenWeatherModel provideWeatherModel() {
         return new OpenWeatherModel();
     }
 
