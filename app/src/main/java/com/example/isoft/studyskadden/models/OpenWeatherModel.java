@@ -1,5 +1,9 @@
 package com.example.isoft.studyskadden.models;
 
+import android.os.Looper;
+import android.util.Log;
+
+import com.example.isoft.studyskadden.PreviewCityWeather;
 import com.example.isoft.studyskadden.entities.MyCity;
 import com.example.isoft.studyskadden.realm.MyCityRealmManager;
 import com.example.isoft.studyskadden.rest.RestApi;
@@ -18,41 +22,60 @@ public class OpenWeatherModel implements WeatherModel {
     private MyCityRealmManager myCityRealmManager;
     private Realm realm;
 
+    private final static String TAG = "Threading";
+
     @Override
-    public Observable<MyCity> request(String name) {
+    public Observable<PreviewCityWeather> request(String name) {
         RestApi weatherService = RetrofitServiceFactory.getInstance();
-        return weatherService.getWheatherReportByCityName(name).map(forecastDaily -> new MyCity(forecastDaily));
+        return weatherService
+                .getWheatherReportByCityName(name)
+                .map(forecastDaily ->
+                {
+                    Log.d(TAG, "request parcing & saving & building preview" + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
+                    MyCity myCity = new MyCity(forecastDaily);
+                    RealmObject savedCity = myCityRealmManager.save(Realm.getDefaultInstance(), myCity);
+                    PreviewCityWeather previewCityWeather = new PreviewCityWeather(savedCity);
+                    return previewCityWeather;
+                });
     }
 
     @Override
-    public Observable<MyCity> request(long id) {
+    public Observable<PreviewCityWeather> request(long id) {
         RestApi weatherService = RetrofitServiceFactory.getInstance();
-        return weatherService.getWheatherReportByCityId(id).map(forecastDaily -> new MyCity(forecastDaily));
+        return weatherService
+                .getWheatherReportByCityId(id)
+                .map(forecastDaily ->
+                {
+                    Log.d(TAG, "request parcing & saving & building preview" + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
+                    MyCity myCity = new MyCity(forecastDaily);
+                    RealmObject savedCity = myCityRealmManager.save(Realm.getDefaultInstance(), myCity);
+                    PreviewCityWeather previewCityWeather = new PreviewCityWeather(savedCity);
+                    return previewCityWeather;
+                });
     }
 
     @Override
     public RealmResults<MyCity> getAll() {
+        Log.d(TAG, "getAll" + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
         return myCityRealmManager.getAll(realm);
     }
 
     @Override
-    public RealmObject save(MyCity myCity) {
-        return myCityRealmManager.save(realm,myCity);
-    }
-
-    @Override
     public void remove(long id) {
+        Log.d(TAG, "remove" + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
         myCityRealmManager.remove(realm, id);
     }
 
     @Override
     public void init() {
+        Log.d(TAG, "init" + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
         realm = Realm.getDefaultInstance();
         myCityRealmManager = new MyCityRealmManager();
     }
 
     @Override
     public void closeDBconnection() {
+        Log.d(TAG, "closeDBconnection" + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
         realm.close();
     }
 

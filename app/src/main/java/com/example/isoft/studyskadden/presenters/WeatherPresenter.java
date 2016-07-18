@@ -1,5 +1,6 @@
 package com.example.isoft.studyskadden.presenters;
 
+import android.os.Looper;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
@@ -7,7 +8,6 @@ import com.example.isoft.studyskadden.PreviewCityWeather;
 import com.example.isoft.studyskadden.R;
 import com.example.isoft.studyskadden.entities.MyCity;
 import com.example.isoft.studyskadden.models.WeatherModel;
-import com.example.isoft.studyskadden.rest.pojo.ForecastDaily;
 import com.example.isoft.studyskadden.ui.WeatherView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -39,20 +39,20 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
         this.model = model;
     }
 
-    private final static String FORECAST_DAILY_SUBSCRIBER = "forecastDailySubscriber";
+    private final static String FORECAST_DAILY_SUBSCRIBER = "Threading subscriber";
 
-    private Subscriber<MyCity> getForecastObservable(){
+    private Subscriber<PreviewCityWeather> getPreviewSubscriber(){
 
-        Subscriber<MyCity> forecastDailySubscriber = new Subscriber<MyCity>() {
+        Subscriber<PreviewCityWeather> forecastDailySubscriber = new Subscriber<PreviewCityWeather>() {
             @Override
             public void onStart() {
-                Log.d(FORECAST_DAILY_SUBSCRIBER, "onStart");
+                Log.d(FORECAST_DAILY_SUBSCRIBER, "onStart" + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
                 mMvpView.startUpdate();
             }
 
             @Override
             public void onCompleted() { // show results
-                Log.d(FORECAST_DAILY_SUBSCRIBER, "onCompleted");
+                Log.d(FORECAST_DAILY_SUBSCRIBER, "onCompleted" + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
                 mMvpView.stopUpdate();
             }
 
@@ -60,15 +60,15 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
             public void onError(Throwable e) {
                 mMvpView.stopUpdate();
                 if (e!=null) {
-                    Log.d(FORECAST_DAILY_SUBSCRIBER, "onError " + e.toString());
+                    Log.d(FORECAST_DAILY_SUBSCRIBER, "onError " + e.toString() + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
                     mMvpView.showMessage(R.string.trouble ,e.getMessage());
                 }
             }
 
             @Override
-            public void onNext(MyCity city) { // saving items
-                Log.d(FORECAST_DAILY_SUBSCRIBER, "onNext " + city.getName());
-                addCity(city);
+            public void onNext(PreviewCityWeather city) { // saving items
+                Log.d(FORECAST_DAILY_SUBSCRIBER, "onNext " + city.name + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
+                mMvpView.addCity(city);
             }
         };
 
@@ -78,10 +78,10 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
 
     public void refreshData() {
         RealmResults<MyCity> allCities =  model.getAll();
-        LinkedList<Observable<MyCity>> observables = new LinkedList<>();
+        LinkedList<Observable<PreviewCityWeather>> observables = new LinkedList<>();
 
         for (MyCity city : allCities) {
-            Observable<MyCity> dailyObservable = model.request(city.getId())
+            Observable<PreviewCityWeather> dailyObservable = model.request(city.getId())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread());
             observables.add(dailyObservable);
@@ -93,19 +93,19 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        Subscription subscription = observable.subscribe(getForecastObservable());
+        Subscription subscription = observable.subscribe(getPreviewSubscriber());
 
         mSubscriptions.add(subscription);
     }
 
     public void requestCity(String query){
-        Observable<MyCity> dailyObservable = model.request(query);
+        Observable<PreviewCityWeather> dailyObservable = model.request(query);
 
         Observable observable = dailyObservable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        Subscription subscription = observable.subscribe(getForecastObservable());
+        Subscription subscription = observable.subscribe(getPreviewSubscriber());
 
         mSubscriptions.add(subscription);
     }
@@ -113,17 +113,6 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
     public void removeCity(RecyclerView.ViewHolder viewHolder){
         model.remove(viewHolder.getItemId());
         mMvpView.removeCity(viewHolder.getAdapterPosition());
-    }
-
-    public void addCity(MyCity myCity){
-        RealmObject savedCity = model.save(myCity);
-        PreviewCityWeather previewCityWeather = new PreviewCityWeather(savedCity);
-        EventBus.getDefault().post(previewCityWeather);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onCityAdded(PreviewCityWeather previewCityWeather) {
-        mMvpView.addCity(previewCityWeather);
     }
 
     public void setCityList(){
@@ -139,7 +128,7 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
     @Override
     public void attachView(WeatherView mvpView) {
         model.init();
-        EventBus.getDefault().register(this);
+        //EventBus.getDefault().register(this);
         super.attachView(mvpView);
     }
 
@@ -149,7 +138,7 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
             mMvpView.stopUpdate();
         }
         model.closeDBconnection();
-        EventBus.getDefault().unregister(this);
+        //EventBus.getDefault().unregister(this);
         super.detachView();
     }
 

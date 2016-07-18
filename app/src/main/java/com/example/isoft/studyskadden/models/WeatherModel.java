@@ -1,5 +1,6 @@
 package com.example.isoft.studyskadden.models;
 
+import com.example.isoft.studyskadden.PreviewCityWeather;
 import com.example.isoft.studyskadden.entities.MyCity;
 import com.example.isoft.studyskadden.rest.pojo.ForecastDaily;
 
@@ -12,10 +13,9 @@ import rx.Observable;
  */
 public interface WeatherModel {
 
-    public Observable<MyCity> request(String name);
-    public Observable<MyCity> request(long id);
+    public Observable<PreviewCityWeather> request(String name);
+    public Observable<PreviewCityWeather> request(long id);
     public RealmResults<MyCity> getAll();
-    public RealmObject save(MyCity myCity);
     public void remove(long id);
     public void closeDBconnection();
     public void init();
