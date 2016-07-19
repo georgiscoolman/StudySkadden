@@ -44,16 +44,101 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
         getAppComponent().inject(this);
         setContentView(R.layout.activity_weather);
         ButterKnife.bind(this);
-
-        initList();
-
         weatherPresenter.attachView(this);
-
         weatherPresenter.setCityList();
-
+        initList();
         checkAdapterIsEmpty();
-
         swipeRefreshLayout.setOnRefreshListener(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        weatherPresenter.detachView();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        MenuItem refreshMenuItem = menu.findItem(R.id.menu_refresh);
+        if (isRefreshingEnable){
+            refreshMenuItem.setVisible(true);
+        }
+        else {
+            refreshMenuItem.setVisible(false);
+        }
+
+        final MenuItem item = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setQueryHint(getString(R.string.city_name));
+        searchView.setOnQueryTextListener(this);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.menu_refresh){
+            onRefresh();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void addCity(PreviewCityWeather previewCityWeather){
+        if (mAdapter != null)
+            mAdapter.addItem(previewCityWeather);
+    }
+
+    @Override
+    public void removeCity(Long id){
+        if (mAdapter != null)
+            mAdapter.dropItem(id);
+    }
+
+    @Override
+    public void startUpdate() {
+        swipeRefreshLayout.setRefreshing(true);
+    }
+
+    @Override
+    public void stopUpdate() {
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void showMessage(String title, String message){
+        AlertDialog messDialog = new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .create();
+
+        messDialog.show();
+    }
+
+    @Override
+    public void onRefresh() {
+        if (mAdapter!=null){
+            if (mAdapter.getItemCount()>0)
+                weatherPresenter.refreshAllCities();
+        }
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        weatherPresenter.requestCity(query);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
     }
 
     private void initList() {
@@ -90,26 +175,6 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
         touchHelper.attachToRecyclerView(recyclerView);
     }
 
-    @Override
-    public void onRefresh() {
-        if (mAdapter!=null){
-            if (mAdapter.getItemCount()>0)
-                weatherPresenter.refreshAllCities();
-        }
-    }
-
-    @Override
-    public void addCity(PreviewCityWeather previewCityWeather){
-        if (mAdapter != null)
-            mAdapter.addItem(previewCityWeather);
-    }
-
-    @Override
-    public void removeCity(Long id){
-        if (mAdapter != null)
-            mAdapter.dropItem(id);
-    }
-
     private void hideList(){
         emptyView.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
@@ -131,73 +196,4 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
         }
     }
 
-    @Override
-    public void startUpdate() {
-        swipeRefreshLayout.setRefreshing(true);
-    }
-
-    @Override
-    public void stopUpdate() {
-        swipeRefreshLayout.setRefreshing(false);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        MenuItem refreshMenuItem = menu.findItem(R.id.menu_refresh);
-        if (isRefreshingEnable){
-            refreshMenuItem.setVisible(true);
-        }
-        else {
-            refreshMenuItem.setVisible(false);
-        }
-
-        final MenuItem item = menu.findItem(R.id.action_search);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
-        searchView.setQueryHint(getString(R.string.city_name));
-        searchView.setOnQueryTextListener(this);
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        if (item.getItemId() == R.id.menu_refresh){
-            onRefresh();
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        weatherPresenter.detachView();
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        weatherPresenter.requestCity(query);
-        return true;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        return false;
-    }
-
-    @Override
-    public void showMessage(String title, String message){
-        AlertDialog messDialog = new AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(message)
-                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                    dialog.dismiss();
-                })
-                .create();
-
-        messDialog.show();
-    }
 }
