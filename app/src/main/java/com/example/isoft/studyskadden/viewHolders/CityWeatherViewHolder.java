@@ -50,8 +50,8 @@ public class CityWeatherViewHolder extends RecyclerView.ViewHolder implements It
         String url = String.format(WEB_IMAGES_FORMAT, RestApi.URL, item.icon);
         Glide.with(context).load(url).into(mImageViewIcon);
 
-        setTextValues(context, mTextViewTempMorning, R.string.max_temp_format, Math.round(item.tempMorning));
-        setTextValues(context, mTextViewTempEvening, R.string.min_temp_format, Math.round(item.tempEvening));
+        setTextValues(context, mTextViewTempMorning, R.string.morning_temp_format, Math.round(item.tempMorning));
+        setTextValues(context, mTextViewTempEvening, R.string.evening_temp_format, Math.round(item.tempEvening));
 
         setTextValue(mTextViewDescription, item.description);
 

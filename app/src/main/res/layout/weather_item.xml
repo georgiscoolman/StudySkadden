@@ -26,24 +26,24 @@
             android:id="@+id/text_city_country"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
+            android:paddingBottom="10dp"
             android:textSize="21sp"
             android:textColor="@android:color/black"
-            android:textAppearance="@style/TextAppearance.RobotoSlab.Light"
+            android:textAppearance="@style/TextAppearance.RobotoSlab.Regular"
             />
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="10dp"
             android:gravity="center">
 
             <ImageView
                 android:layout_marginRight="8dp"
                 android:id="@+id/image_icon"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="50px"
+                android:layout_height="50px"
                 android:scaleType="fitXY"/>
 
             <TextView
@@ -81,7 +81,7 @@
             android:id="@+id/text_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
+            android:paddingBottom="10dp"
             android:textSize="21sp"
             android:textAppearance="@style/TextAppearance.RobotoSlab.Light"/>
 
