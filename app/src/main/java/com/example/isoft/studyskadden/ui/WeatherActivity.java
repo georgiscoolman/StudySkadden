@@ -36,7 +36,7 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
     @BindView(R.id.tv_empty_list) TextView emptyView;
 
     private CitiesAdapter mAdapter;
-    private boolean isRefreshingEnable;
+    private MenuItem refreshMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,15 +60,7 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        MenuItem refreshMenuItem = menu.findItem(R.id.menu_refresh);
-        if (isRefreshingEnable){
-            refreshMenuItem.setVisible(true);
-        }
-        else {
-            refreshMenuItem.setVisible(false);
-        }
-
+        refreshMenuItem = menu.findItem(R.id.menu_refresh);
         final MenuItem item = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setQueryHint(getString(R.string.city_name));
@@ -79,7 +71,6 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         if (item.getItemId() == R.id.menu_refresh){
             onRefresh();
         }
@@ -179,17 +170,20 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
         emptyView.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
         swipeRefreshLayout.setEnabled(false);
+        if (refreshMenuItem != null)
+            refreshMenuItem.setVisible(false);
     }
 
     private void showList(){
         emptyView.setVisibility(View.GONE);
         recyclerView.setVisibility(View.VISIBLE);
         swipeRefreshLayout.setEnabled(true);
+        if (refreshMenuItem != null)
+            refreshMenuItem.setVisible(true);
     }
 
     private void checkAdapterIsEmpty() {
-        isRefreshingEnable = !(mAdapter.getItemCount() == 0);
-        if (isRefreshingEnable) {
+        if (mAdapter.getItemCount() > 0) {
             showList();
         } else {
             hideList();
