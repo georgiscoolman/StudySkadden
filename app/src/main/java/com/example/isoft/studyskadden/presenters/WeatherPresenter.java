@@ -1,21 +1,14 @@
 package com.example.isoft.studyskadden.presenters;
 
 import android.os.Looper;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.example.isoft.studyskadden.PreviewCityWeather;
-import com.example.isoft.studyskadden.R;
-import com.example.isoft.studyskadden.entities.MyCity;
 import com.example.isoft.studyskadden.models.OpenWeatherModel;
 import com.example.isoft.studyskadden.ui.WeatherView;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-
 import javax.inject.Inject;
 
-import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -34,96 +27,12 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
         this.model = model;
     }
 
-    private final static String FORECAST_DAILY_SUBSCRIBER = "Threading subscriber";
-
-    private Subscriber<PreviewCityWeather> getPreviewSubscriber(){
-
-        Subscriber<PreviewCityWeather> forecastDailySubscriber = new Subscriber<PreviewCityWeather>() {
-            @Override
-            public void onStart() {
-                Log.d(FORECAST_DAILY_SUBSCRIBER, "onStart" + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
-                mMvpView.startUpdate();
-            }
-
-            @Override
-            public void onCompleted() { // show results
-                Log.d(FORECAST_DAILY_SUBSCRIBER, "onCompleted" + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
-                mMvpView.stopUpdate();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                mMvpView.stopUpdate();
-                if (e!=null) {
-                    Log.d(FORECAST_DAILY_SUBSCRIBER, "onError " + e.toString() + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
-                    mMvpView.showMessage(R.string.trouble ,e.getMessage());
-                }
-            }
-
-            @Override
-            public void onNext(PreviewCityWeather city) { // saving items
-                Log.d(FORECAST_DAILY_SUBSCRIBER, "onNext " + city.name + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
-                mMvpView.addCity(city);
-            }
-        };
-
-        return forecastDailySubscriber;
-
-    }
-
-    public void refreshData() {
-        RealmResults<MyCity> allCities =  model.getAll();
-        LinkedList<Observable<PreviewCityWeather>> observables = new LinkedList<>();
-
-        for (MyCity city : allCities) {
-            Observable<PreviewCityWeather> dailyObservable = model.request(city.getId())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread());
-            observables.add(dailyObservable);
-        }
-
-        Observable observable = Observable.merge(observables);
-
-        observable
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-
-        Subscription subscription = observable.subscribe(getPreviewSubscriber());
-
-        mSubscriptions.add(subscription);
-    }
-
-    public void requestCity(String query){
-        Observable<PreviewCityWeather> dailyObservable = model.request(query);
-
-        Observable observable = dailyObservable
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-
-        Subscription subscription = observable.subscribe(getPreviewSubscriber());
-
-        mSubscriptions.add(subscription);
-    }
-
-    public void removeCity(RecyclerView.ViewHolder viewHolder){
-        model.remove(viewHolder.getItemId());
-        mMvpView.removeCity(viewHolder.getAdapterPosition());
-    }
-
-    public void setCityList(){
-        mMvpView.startUpdate();
-
-        RealmResults<MyCity> allCities =  model.getAll();
-        ArrayList<PreviewCityWeather> weathers = PreviewCityWeather.fromList(allCities);
-
-        mMvpView.setCityList(weathers);
-        mMvpView.stopUpdate();
-    }
+    private final static String ADD_CITY_SUBSCRIBER = "Thread add";
+    private final static String REMOVE_CITY_SUBSCRIBER = "Thread remove";
 
     @Override
     public void attachView(WeatherView mvpView) {
         model.init();
-        //EventBus.getDefault().register(this);
         super.attachView(mvpView);
     }
 
@@ -132,9 +41,118 @@ public class WeatherPresenter extends BasePresenter<WeatherView>{
         if (mSubscriptions.hasSubscriptions() && !mSubscriptions.isUnsubscribed()) {
             mMvpView.stopUpdate();
         }
-        model.closeDBconnection();
-        //EventBus.getDefault().unregister(this);
         super.detachView();
     }
 
+    private Subscriber<PreviewCityWeather> getAddCitySubscriber(){
+
+        Subscriber<PreviewCityWeather> addCitySubscriber = new Subscriber<PreviewCityWeather>() {
+            @Override
+            public void onStart() {
+                Log.d(ADD_CITY_SUBSCRIBER, "onStart" + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
+                mMvpView.startUpdate();
+            }
+
+            @Override
+            public void onCompleted() {
+                Log.d(ADD_CITY_SUBSCRIBER, "onCompleted" + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
+                mMvpView.stopUpdate();
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                mMvpView.stopUpdate();
+                if (e!=null) {
+                    Log.d(ADD_CITY_SUBSCRIBER, "onError " + e.toString() + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
+                    mMvpView.showMessage(e.getClass().getName() ,e.getMessage());
+                }
+            }
+
+            @Override
+            public void onNext(PreviewCityWeather city) {
+                Log.d(ADD_CITY_SUBSCRIBER, "onNext " + city.name + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
+                mMvpView.addCity(city);
+            }
+        };
+
+        return addCitySubscriber;
+
+    }
+
+    private Subscriber<Long> getRemoveCitySubscriber(){
+
+        Subscriber<Long> removeCitySubscriber = new Subscriber<Long>() {
+            @Override
+            public void onStart() {
+                Log.d(REMOVE_CITY_SUBSCRIBER, "onStart" + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
+                mMvpView.startUpdate();
+            }
+
+            @Override
+            public void onCompleted() {
+                Log.d(REMOVE_CITY_SUBSCRIBER, "onCompleted" + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
+                mMvpView.stopUpdate();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                mMvpView.stopUpdate();
+                if (e!=null) {
+                    Log.d(REMOVE_CITY_SUBSCRIBER, "onError " + e.toString() + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
+                    mMvpView.showMessage(e.getClass().getName() ,e.getMessage());
+                }
+            }
+
+            @Override
+            public void onNext(Long cityId) {
+                Log.d(REMOVE_CITY_SUBSCRIBER, "onNext " + cityId + (Looper.myLooper() == Looper.getMainLooper() ? " on UI" : " on OUT"));
+                mMvpView.removeCity(cityId);
+            }
+        };
+
+        return removeCitySubscriber;
+
+    }
+
+    public void refreshAllCities() {
+        Observable<PreviewCityWeather> allCitiesObservable =  model
+                .getAllId()
+                .flatMap(ids -> Observable.from(ids))
+                .flatMap(id -> model.request(id))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        Subscription subscription = allCitiesObservable.subscribe(getAddCitySubscriber());
+        mSubscriptions.add(subscription);
+    }
+
+    public void requestCity(String query){
+        Observable<PreviewCityWeather> requestObservable = model
+                .request(query)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        Subscription subscription = requestObservable.subscribe(getAddCitySubscriber());
+        mSubscriptions.add(subscription);
+    }
+
+    public void removeCity(Long id){
+        Observable<Long> removeObservable = model.remove(id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        Subscription subscription = removeObservable.subscribe(getRemoveCitySubscriber());
+        mSubscriptions.add(subscription);
+    }
+
+    public void setCityList(){
+        Observable<PreviewCityWeather> observable =  model.getAll()
+                .flatMap(previewCityWeathers -> Observable.from(previewCityWeathers))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        Subscription subscription = observable.subscribe(getAddCitySubscriber());
+        mSubscriptions.add(subscription);
+    }
 }

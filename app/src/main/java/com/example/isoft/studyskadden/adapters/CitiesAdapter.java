@@ -83,9 +83,20 @@ public class CitiesAdapter extends RecyclerView.Adapter<CityWeatherViewHolder> i
 
     }
 
-    public void dropItem(int position) {
-        cityWeathers.remove(position);
-        notifyItemRemoved(position);
+    public void dropItem(Long id) {
+        PreviewCityWeather removeItem = getItem(id);
+        cityWeathers.remove(removeItem);
+        notifyItemRemoved(cityWeathers.indexOf(removeItem));
+    }
+
+    public PreviewCityWeather getItem(Long id){
+        PreviewCityWeather res = null;
+        for (PreviewCityWeather cityWeather : cityWeathers) {
+            if (cityWeather.id.equals(id)){
+                return cityWeather;
+            }
+        }
+        return res;
     }
 
     @Override

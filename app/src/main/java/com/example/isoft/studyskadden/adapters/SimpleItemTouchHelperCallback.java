@@ -54,7 +54,7 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback  {
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int i) {
-        mWeatherPresenter.removeCity(viewHolder);
+        mWeatherPresenter.removeCity(viewHolder.getItemId());
     }
 
     @Override

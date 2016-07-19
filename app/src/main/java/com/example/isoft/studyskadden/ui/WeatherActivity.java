@@ -8,7 +8,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +19,7 @@ import com.example.isoft.studyskadden.R;
 import com.example.isoft.studyskadden.adapters.SimpleItemTouchHelperCallback;
 import com.example.isoft.studyskadden.presenters.WeatherPresenter;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -37,6 +36,7 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
     @BindView(R.id.tv_empty_list) TextView emptyView;
 
     private CitiesAdapter mAdapter;
+    private boolean isRefreshingEnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,23 +45,56 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
         setContentView(R.layout.activity_weather);
         ButterKnife.bind(this);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(true);
+        initList();
 
         weatherPresenter.attachView(this);
 
         weatherPresenter.setCityList();
 
-        if (swipeRefreshLayout != null) {
-            swipeRefreshLayout.setOnRefreshListener(this);
-        }
+        checkAdapterIsEmpty();
+
+        swipeRefreshLayout.setOnRefreshListener(this);
+    }
+
+    private void initList() {
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+
+        mAdapter = new CitiesAdapter(this, new ArrayList<>());
+        mAdapter.setHasStableIds(true);
+        mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                checkAdapterIsEmpty();
+            }
+
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                checkAdapterIsEmpty();
+            }
+
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                super.onItemRangeRemoved(positionStart, itemCount);
+                checkAdapterIsEmpty();
+            }
+
+        });
+
+        recyclerView.setAdapter(mAdapter);
+
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter, weatherPresenter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(recyclerView);
     }
 
     @Override
     public void onRefresh() {
         if (mAdapter!=null){
             if (mAdapter.getItemCount()>0)
-                weatherPresenter.refreshData();
+                weatherPresenter.refreshAllCities();
         }
     }
 
@@ -72,70 +105,29 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
     }
 
     @Override
-    public void removeCity(int adapterPosition){
+    public void removeCity(Long id){
         if (mAdapter != null)
-            mAdapter.dropItem(adapterPosition);
-    }
-
-    @Override
-    public void setCityList(List<PreviewCityWeather> previewCityWeathers) {
-        if (previewCityWeathers!=null) {
-            if (mAdapter != null) {
-                mAdapter.updateItems(previewCityWeathers);
-            } else {
-                mAdapter = new CitiesAdapter(this, previewCityWeathers);
-                mAdapter.setHasStableIds(true);
-                mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-                    @Override
-                    public void onChanged() {
-                        super.onChanged();
-                        checkAdapterIsEmpty();
-                    }
-
-                    @Override
-                    public void onItemRangeInserted(int positionStart, int itemCount) {
-                        super.onItemRangeInserted(positionStart, itemCount);
-                        checkAdapterIsEmpty();
-                    }
-
-                    @Override
-                    public void onItemRangeRemoved(int positionStart, int itemCount) {
-                        super.onItemRangeRemoved(positionStart, itemCount);
-                        checkAdapterIsEmpty();
-                    }
-
-                });
-
-                recyclerView.setAdapter(mAdapter);
-
-                ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter, weatherPresenter);
-                ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-                touchHelper.attachToRecyclerView(recyclerView);
-
-                checkAdapterIsEmpty();
-            }
-        }else {
-            hideList();
-        }
+            mAdapter.dropItem(id);
     }
 
     private void hideList(){
         emptyView.setVisibility(View.VISIBLE);
-        swipeRefreshLayout.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.GONE);
         swipeRefreshLayout.setEnabled(false);
     }
 
     private void showList(){
         emptyView.setVisibility(View.GONE);
-        swipeRefreshLayout.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.VISIBLE);
         swipeRefreshLayout.setEnabled(true);
     }
 
     private void checkAdapterIsEmpty() {
-        if (mAdapter.getItemCount() == 0) {
-            hideList();
-        } else {
+        isRefreshingEnable = !(mAdapter.getItemCount() == 0);
+        if (isRefreshingEnable) {
             showList();
+        } else {
+            hideList();
         }
     }
 
@@ -154,7 +146,7 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
         MenuItem refreshMenuItem = menu.findItem(R.id.menu_refresh);
-        if (swipeRefreshLayout.isEnabled()){
+        if (isRefreshingEnable){
             refreshMenuItem.setVisible(true);
         }
         else {
@@ -197,9 +189,9 @@ public class WeatherActivity extends BaseActivity implements WeatherView, SwipeR
     }
 
     @Override
-    public void showMessage(int titleResId, String message){
+    public void showMessage(String title, String message){
         AlertDialog messDialog = new AlertDialog.Builder(this)
-                .setTitle(getString(titleResId))
+                .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                     dialog.dismiss();

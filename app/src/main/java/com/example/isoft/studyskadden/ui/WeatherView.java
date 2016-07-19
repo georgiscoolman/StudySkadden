@@ -13,11 +13,9 @@ public interface WeatherView extends MvpView {
 
     public void stopUpdate();
 
-    public void showMessage(int titleResId, String message);
-
-    public void setCityList(List<PreviewCityWeather> cityList);
+    public void showMessage(String title, String message);
 
     public void addCity(PreviewCityWeather previewCityWeather);
 
-    public void removeCity(int adapterPosition);
+    public void removeCity(Long cityId);
 }
